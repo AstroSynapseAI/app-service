@@ -30,7 +30,30 @@ export const useUsersStore = defineStore({
       if (this.user) {
         chatStore.loadHistory();
       }
-    }
+    },
+    async getUsers() {
+
+    },
+
+    async getUser() {
+
+    },
+
+    async getUserAvatar() {
+
+    },
+
+    async getUserAgents() {
+
+    },
+
+    async getUserPlugins() {
+
+    },
+
+    async getUserModels() {
+
+    },
   }
 
 })

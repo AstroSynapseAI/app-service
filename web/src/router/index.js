@@ -29,6 +29,49 @@ const router = createRouter({
       name: 'asai',
       component: AsaiChatView
     },
+    {
+      path: '/avatar',
+      name: 'home',
+      component: () => import('../views/Admin/HomeView.vue'),
+      children: [
+        {
+          path: ':name',
+          name: 'chat',
+          component: () => import('../views/Admin/HomeView.vue')
+        },
+        {
+          path: '/:name/personality',
+          name: 'personality',
+          component: () => import('../views/Admin/PersonalityView.vue')
+        },
+        {
+          path: '/:name/agents',
+          name: 'agents',
+          component: () => import('../views/Admin/AgentsView.vue')
+        },
+        {
+          path: '/:name/agents/:agent/config',
+          name: 'agent-config',
+          component: () => import('../views/Admin/AgentConfigView.vue')
+        },
+        {
+          path: '/:name/plugins',
+          name: 'plugins',
+          component: () => import('../views/Admin/PluginsView.vue')
+        },
+        {
+          path: '/:name/models',
+          name: 'models',
+          component: () => import('../views/Admin/ModelsView.vue')
+        },
+        {
+          path: '/account',
+          name: 'account',
+          component: () => import('../views/Admin/AccountView.vue')
+        },
+
+      ]
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {

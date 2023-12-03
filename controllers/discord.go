@@ -46,7 +46,7 @@ func NewMemberHandler(session *discordgo.Session, addEvent *discordgo.GuildMembe
 
 	asaiChain.SetSessionID(sessionID)
 
-	userPrompt := fmt.Sprintf("New user, %s (%s), has joined the server. Now invoking the onboarding_script.txt to welcome them properly!", userName, sessionID)
+	userPrompt := fmt.Sprintf("New user, %s (%s), has joined the server. Invoke the onboarding_script.txt and welcome user to the server.", userName, sessionID)
 
 	response, err := asaiChain.Prompt(context.Background(), userPrompt)
 	if err != nil {

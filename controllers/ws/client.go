@@ -19,6 +19,8 @@ var (
 	// The reason why it has to be less than PingRequency is becuase otherwise it will
 	// send a new Ping before getting response
 	pingInterval = (pongWait * 9) / 10
+	// Prompt for intializing conversation
+	prompt = "New user, has connected. Invoke the onboarding_script.txt and welcome user."
 )
 
 type Client struct {
@@ -104,6 +106,10 @@ func (client *Client) ReadMsgs(ctx context.Context) {
 
 		client.asaiChain.Stream = func(ctx context.Context, chunk []byte) {
 			client.egress <- chunk
+		}
+
+		if request.UserPrompt == "new user connected" {
+			request.UserPrompt = prompt
 		}
 
 		go func() {

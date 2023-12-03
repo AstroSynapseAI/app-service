@@ -164,7 +164,13 @@ export const useChatStore = defineStore({
             }
             responseMsgs.push(msg)
           }
+
+          if (responseMsgs.length > 0) {
+            this.newUserConnected();
+          }
+
           this.messages = responseMsgs;
+
         }
       } catch (error) {
         console.error(error);
@@ -173,6 +179,11 @@ export const useChatStore = defineStore({
 
     closeError() {
       this.connectionErr.active = false;
+    },
+
+    newUserConnected() {
+      const prompt = "new user connected";
+      this.sendPrompt(prompt);
     }
   }
 })

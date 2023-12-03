@@ -56,20 +56,11 @@ func (agent *DocumentsTool) Description() string {
 		- Name: Astro Synapse Impressum
 		  - FileName: astrosynapse_impressum.txt
 		  - Description: General information about Astro Synapse. Use to answer any information related to Astro Synapse, such as the company's mission, vision, website, etc.
-		- Name: Astro Synapse Executive Summary
-		  - FileName: astrosynapse_es.txt
-		  - Description: Summary of the Astro Synapse Executive Summary. Use to answer questions about Astro Synapse's business plans, investment asks and cycles, broader details about finance and operations.
-		- Name: Astro Synapse Team
-		  - FileName: astrosynapse_team.txt
-		  - Description: Information about the Astro Synapse team. Contains short bios and relevant links. Use this to retrieve information about the Astro Synapse team.
-		- Name: ASAI Architecture
-		  - FileName: asai_architecture.txt
+		- Name: ASAI Impressum
+		  - FileName: asai_impressum.txt
 		  - Description: ASAI Architecture describes the code and technologies used to build and run ASAI. Use this document to understand how ASAI works and to answer any technical questions about ASAI.
-		- Name: Creator Impressum
-		  - FileName: creator_impressum.txt
-		  - Description: Information about the creator of ASAI. Use to answer any questions about the creator of ASAI.
-		- Name: Welcome Script
-		  - FileName: welcome_script.txt
+		- Name: Onboarding Script
+		  - FileName: onboarding_script.txt
 		  - Description: Welcome script for new users. Use this document when you are prompted to welcome or onboard a new user to our system.
 		
 		**Error Handling**:
