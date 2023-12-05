@@ -1,6 +1,6 @@
 <script setup>
-import PromptInput from '../components/PromptInput.vue';
-import { useChatStore } from '../stores/chat.store.js';
+import PromptInput from '@/components/PromptInput.vue';
+import { useChatStore } from '@/stores/chat.store.js';
 import { storeToRefs } from 'pinia';
 
 const chatStore = useChatStore();

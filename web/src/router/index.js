@@ -30,46 +30,45 @@ const router = createRouter({
       component: AsaiChatView
     },
     {
-      path: '/avatar',
-      name: 'home',
-      component: () => import('../views/Admin/HomeView.vue'),
+      path: '/admin/:avatar',
+      name: 'admin',
+      component: () => import('../views/Admin/AdminView.vue'),
       children: [
         {
-          path: ':name',
+          path: '',
           name: 'chat',
           component: () => import('../views/Admin/HomeView.vue')
         },
         {
-          path: '/:name/personality',
+          path: '/:avatar/personality',
           name: 'personality',
           component: () => import('../views/Admin/PersonalityView.vue')
         },
         {
-          path: '/:name/agents',
+          path: '/:avatar/agents',
           name: 'agents',
           component: () => import('../views/Admin/AgentsView.vue')
         },
         {
-          path: '/:name/agents/:agent/config',
+          path: '/:avatar/agents/:agent/config',
           name: 'agent-config',
           component: () => import('../views/Admin/AgentConfigView.vue')
         },
         {
-          path: '/:name/plugins',
+          path: '/:avatar/plugins',
           name: 'plugins',
           component: () => import('../views/Admin/PluginsView.vue')
         },
         {
-          path: '/:name/models',
+          path: '/:avatar/models',
           name: 'models',
           component: () => import('../views/Admin/ModelsView.vue')
         },
         {
-          path: '/account',
+          path: '/:avatar/account',
           name: 'account',
           component: () => import('../views/Admin/AccountView.vue')
         },
-
       ]
     },
   ],

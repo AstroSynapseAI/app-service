@@ -10,6 +10,7 @@ export const useUsersStore = defineStore({
   id: 'users',
   state: () => ({
     user: JSON.parse(localStorage.getItem('user')),
+    avatarName: 'asai',
   }),
   actions: {
     async getSession() {

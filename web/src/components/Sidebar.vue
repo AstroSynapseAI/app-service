@@ -2,19 +2,19 @@
 import { useUsersStore } from '../stores/user.store';
 
 const userStore = useUsersStore();
-const avatarName = userStore.user.avatar
+const avatarName = userStore.avatarName
 </script>
 
 <template>
   <nav id="sidebar" class="sidebar js-sidebar">
 		<div class="sidebar-content js-simplebar">
-			<router-link :to="{name: 'home', params: { avatar: avatarName }}" class="sidebar-brand">
+			<router-link :to="{name: 'admin', params: { avatar: avatarName }}" class="sidebar-brand">
 				<span class="align-middle">AI Avatar</span>
 			</router-link>
 
 			<ul class="sidebar-nav">
 				<li class="sidebar-item">
-					<router-link :to="{name: 'home', params: { avatar: avatarName }}" class="sidebar-link">
+					<router-link :to="{name: 'admin', params: { avatar: avatarName }}" class="sidebar-link">
 						<i class="align-middle" data-feather="message-circle"></i> <span class="align-middle">Chat</span>
 					</router-link>
 				</li>
@@ -97,12 +97,7 @@ const avatarName = userStore.user.avatar
 </template>
 
 <style scoped>
-.sidebar-content {
-	background-color: #221f1f;
-	border-right: 4px solid white
-}
 .sidebar-link, a.sidebar-link {
-	background-color: #221f1f;
 	color: white;
 }
 .sidebar .card {

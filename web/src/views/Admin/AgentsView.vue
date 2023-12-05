@@ -1,5 +1,5 @@
 <script setup>
-  import { useUsersStore } from '../stores/user.store';
+  import { useUsersStore } from '@/stores/user.store';
 
   const userStore = useUsersStore();
   const avatarName = userStore.user.avatar
