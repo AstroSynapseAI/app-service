@@ -27,25 +27,31 @@ onMounted(() => {
 </script>
 
 <template>  
-  <div class="row">
-    <div class="col-8">
-      <h1>{{ title }}</h1>
+  <div>
+    <div class="row">
+      <div class="col-8">
+        <h1>{{ title }}</h1>
+      </div>
+      <div class="col-4">
+        <router-link :to="{name: 'home'}"><i class="large-icon" data-feather="x"></i></router-link>
+      </div>
     </div>
-    <div class="col-4">
-      <router-link :to="{name: 'home'}"><i class="large-icon" data-feather="x"></i></router-link>
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-12">
-      <div v-html="content"></div>
+    <div class="row">
+      <div class="col-12">
+        <div v-html="content"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-a {
+a, h1 {
   color: white;
+}
+
+p {
+  font-size: 16px;
 }
 
 .large-icon {

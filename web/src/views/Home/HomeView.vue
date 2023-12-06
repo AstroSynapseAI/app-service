@@ -222,6 +222,7 @@ onMounted(() => {
 <style scoped>
 a {
   color: white;
+  text-decoration: underline;
 }
 
 a:hover {
@@ -258,6 +259,7 @@ nav .btn:hover .asai-icon line {
 .sub-menu h5 {
   font-size: 20px;
   font-weight: 400;
+  color: white;
 }
 
 table i {
@@ -297,6 +299,11 @@ table i {
 
 .btn:hover .disc-icon {
   fill: black;
+}
+
+.btn .feather {
+  height: 24px;
+  width: 24px;
 }
 
 @media screen and (max-width: 1024px) {

@@ -65,6 +65,11 @@ nav {
   margin-top: 50px;
   margin-bottom: 15em;
 }
+
+h5 {
+  color: white;
+  font-size: 1.25em;
+}
 .logo {
   width: 100%;
   margin-bottom: 3em;
@@ -103,6 +108,11 @@ nav {
   border-radius: 0;
   text-decoration: none;
   color: white;
+}
+
+.btn .feather {
+  width: 24px;
+  height: 24px;
 }
 
 .btn:hover {

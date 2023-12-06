@@ -40,32 +40,32 @@ const router = createRouter({
           component: () => import('../views/Admin/HomeView.vue')
         },
         {
-          path: '/:avatar/personality',
+          path: 'personality',
           name: 'personality',
           component: () => import('../views/Admin/PersonalityView.vue')
         },
         {
-          path: '/:avatar/agents',
+          path: 'agents',
           name: 'agents',
           component: () => import('../views/Admin/AgentsView.vue')
         },
         {
-          path: '/:avatar/agents/:agent/config',
+          path: 'agents/:agent/config',
           name: 'agent-config',
           component: () => import('../views/Admin/AgentConfigView.vue')
         },
         {
-          path: '/:avatar/plugins',
+          path: 'plugins',
           name: 'plugins',
           component: () => import('../views/Admin/PluginsView.vue')
         },
         {
-          path: '/:avatar/models',
+          path: 'models',
           name: 'models',
           component: () => import('../views/Admin/ModelsView.vue')
         },
         {
-          path: '/:avatar/account',
+          path: 'account',
           name: 'account',
           component: () => import('../views/Admin/AccountView.vue')
         },
