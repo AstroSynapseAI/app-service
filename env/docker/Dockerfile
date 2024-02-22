@@ -1,5 +1,5 @@
 # Use newer version of Golang and Alpine Linux as base image
-FROM golang:1.20-alpine3.18 AS builder
+FROM golang:1.22-alpine AS builder
 
 # Update packages and install needed dependencies
 RUN apk update && \
