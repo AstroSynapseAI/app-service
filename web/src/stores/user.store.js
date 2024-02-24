@@ -79,7 +79,7 @@ export const useUserStore = defineStore({
       }
     }, 
 
-    async saveProfile(user_id, formData) {
+    async saveProfile(user_id, formData) {   
       try {
         const user = await fetchWrapper.post(`${usersURL}/${user_id}/save/profile`, formData);
         localStorage.setItem('user', JSON.stringify(user));

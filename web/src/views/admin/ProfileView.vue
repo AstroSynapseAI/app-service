@@ -12,11 +12,8 @@ const email = ref('');
 const confirmEmail = ref('');
 
 const validateEmail = () => {
-  return String(email.value)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+  const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return String(email.value).toLowerCase().match(emailRegex);
 };
 
 const confirmedEmail = () => {
@@ -60,14 +57,13 @@ const isChangeButtonDisabled = computed(() => {
 });
 
 const saveUserInfo = async () => {
-  try {
+  /*try {
     const profileData = {
       username: username.value,
       first_name: firstName.value,
       last_name: lastName.value,
       email: email.value
     }
-
     if (user.account) {
       profileData.account_id = user.account.ID
     }
@@ -76,7 +72,8 @@ const saveUserInfo = async () => {
   }
   catch (error) {
     console.error(error)
-  }
+  }*/
+  toast.error('An error occurred while saving profile. Please try again later.');
 }
 
 const updateEmail = async () => {
@@ -111,7 +108,6 @@ const changePassword = async () => {
 }
 
 onMounted(async () => {
-  // Fetch user data
   try {
     await user.getUserAccounts(user.current.ID);
     if (user.account) {
