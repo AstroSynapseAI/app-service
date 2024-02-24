@@ -1,5 +1,5 @@
 <script setup> 
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useUserStore } from '@/stores/user.store';
 
 const user = useUserStore();
@@ -44,6 +44,10 @@ const confirmedPassword = () => {
     return false
   }
 };
+
+const isSaveButtonDisabled = computed(() => {
+  return !username.value.trim() || !firstName.value.trim() || !lastName.value.trim();
+});
 
 const saveUserInfo = async () => {
   try {
@@ -97,37 +101,29 @@ const changePassword = async () => {
 }
 
 onMounted(async () => {
-  username.value = user.current.username;
+  // Fetch user data
   try {
     await user.getUserAccounts(user.current.ID);
     if (user.account) {
+      username.value = user.current?.username ?? '';
       firstName.value = user.account.first_name;
       lastName.value = user.account.last_name;
       email.value = user.account.email;
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error)
   }
-  feather.replace()
+  feather.replace();
 })
-
-
 </script>
 
-<template>
-          
-  <div class="container-fluid p-0">
-    
-    <h1 class="h3 mb-3">Account</h1>
-    
+<template>       
+  <div class="container-fluid p-0">    
+    <h1 class="h3 mb-3">Account</h1>    
     <div class="card">
-
       <div class="card-body">
         <div class="container p-4">
-
           <h3>User Information</h3>
-
           <div class="row">
             <div class="col-6">
               <div class="form-floating mb-3">
@@ -136,7 +132,6 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-
           <div class="row">
             <div class="col-6">
               <div class="form-floating mb-3">
@@ -151,43 +146,13 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-
           <div class="row"> 
             <div class="col-12">
-              <button class="btn btn-primary float-end" @click="saveUserInfo">Save</button>
+              <button class="btn btn-primary float-end" @click="saveUserInfo" :disabled="isSaveButtonDisabled">Save</button>
             </div>
           </div>
-
           <hr>
-
-          <!-- <h3>Update Email</h3>
-
-          <div class="row">
-            <div class="col-6">
-              <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="email" placeholder="Email" v-model="email">
-                <label for="email">Email</label>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="confirmEmail" placeholder="Confirm Email" v-model="confirmEmail">
-                <label for="confirmEmail">Confirm Email</label>
-              </div>
-            </div>
-          </div>
-
-        
-          <div class="row"> 
-            <div class="col-12">
-              <button class="btn btn-primary float-end" @click="updateEmail">Update</button>
-            </div>
-          </div>
-
-          <hr> -->
-
           <h3>Change Password</h3>
-
           <div class="row">
             <div class="col-6">
               <div class="form-floating mb-3">
@@ -202,19 +167,13 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-        
           <div class="row"> 
             <div class="col-12">
               <button class="btn btn-primary float-end" @click="changePassword">Change</button>
-            </div>
-            
+            </div>            
           </div>
-
         </div>
-      </div>
-      
-    </div>
-  
-  </div>
-      
+      </div>      
+    </div>  
+  </div>      
 </template>
