@@ -49,6 +49,16 @@ const isSaveButtonDisabled = computed(() => {
   return !username.value.trim() || !firstName.value.trim() || !lastName.value.trim();
 });
 
+const isChangeButtonDisabled = computed(() => {
+  if (!newPassword.value.trim() || !confirmPassword.value.trim()) {
+    return true;
+  }
+  if (newPassword.value !== confirmPassword.value) {
+    return true;
+  }
+  return false;
+});
+
 const saveUserInfo = async () => {
   try {
     const profileData = {
@@ -169,7 +179,7 @@ onMounted(async () => {
           </div>
           <div class="row"> 
             <div class="col-12">
-              <button class="btn btn-primary float-end" @click="changePassword">Change</button>
+              <button class="btn btn-primary float-end" @click="changePassword" :disabled="isChangeButtonDisabled">Change</button>
             </div>            
           </div>
         </div>
