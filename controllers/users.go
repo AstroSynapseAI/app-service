@@ -197,6 +197,7 @@ func (ctrl *UsersController) Login(ctx *rest.Context) {
 
 func (ctrl *UsersController) GetAccounts(ctx *rest.Context) {
 	fmt.Println("UsersController.GetAccounts")
+
 	userID := ctx.GetID()
 
 	accounts, err := ctrl.User.GetAccounts(userID)
