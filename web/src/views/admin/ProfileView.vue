@@ -31,12 +31,7 @@ const validateEmail = () => {
 };
 
 const confirmedEmail = () => {
-  if (email.value === confirmEmail.value) {
-    return true
-  }
-  else {
-    return false
-  }
+  return email.value === confirmEmail.value;
 };
 
 const isValidEmail = () => {
@@ -47,14 +42,7 @@ const isValidEmail = () => {
   return validEmail
 };
 
-const confirmedPassword = () => {
-  if (newPassword.value === confirmPassword.value) {
-    return true
-  }
-  else {
-    return false
-  }
-};
+const confirmedPassword = () => newPassword.value === confirmPassword.value;
 
 const saveUserInfo = async () => {
   try {
@@ -108,10 +96,11 @@ const changePassword = async () => {
 }
 
 onMounted(async () => {
-  username.value = user.current.username;
+  //username.value = user.current.username;
   try {
     await user.getUserAccounts(user.current.ID);
     if (user.account) {
+      console.log("ProfileView -onMounted- user(getUserAccounts)", user)
       username.value = user.account.username ?? "";
       firstName.value = user.account.first_name;
       lastName.value = user.account.last_name;
