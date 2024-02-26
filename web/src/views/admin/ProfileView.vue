@@ -49,8 +49,7 @@ const saveUserInfo = async () => {
     const profileData = {
       username: username.value,
       first_name: firstName.value,
-      last_name: lastName.value,
-      email: email.value
+      last_name: lastName.value
     }
 
     if (user.account) {
