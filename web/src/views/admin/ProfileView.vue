@@ -96,12 +96,10 @@ const changePassword = async () => {
 }
 
 onMounted(async () => {
-  //username.value = user.current.username;
+  username.value = user.current.username;
   try {
     await user.getUserAccounts(user.current.ID);
     if (user.account) {
-      console.log("ProfileView -onMounted- user(getUserAccounts)", user)
-      username.value = user.account.username ?? "";
       firstName.value = user.account.first_name;
       lastName.value = user.account.last_name;
       email.value = user.account.email;

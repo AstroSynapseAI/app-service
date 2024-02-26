@@ -336,6 +336,11 @@ func (ctrl *UsersController) ChangePassword(ctx *rest.Context) {
 		return
 	}
 
+	if len(reqData.Password) < 8 || reqData.Password == "" {
+		ctx.SetStatus(http.StatusBadRequest)
+		return
+	}
+
 	user, err := ctrl.User.UpdatePassword(userID, reqData.Password)
 	if err != nil {
 		ctx.SetStatus(http.StatusInternalServerError)
