@@ -20,12 +20,29 @@ go get
 go mod tidy
 ```
 
+add a .env.local on web route folder
+
+```bash
+cd web
+```
+
+create `.env.local` file with this content:
+
+```
+# hostname
+VITE_HOSTNAME=http://localhost:8082
+# rest
+VITE_API_URL=http://localhost:8082/api
+# websocket
+VITE_WS_URL=ws://localhost:8082
+```
+
 For local development, the repository comes with a docker-compose.yaml and a Docker file for running the app service with hot reload support [using go air package](https://github.com/cosmtrek/air).
 
 To setup the environment make sure you have docker and docker-compose installed on your local machine. To intialize docker container with hot reloading the first time you run a composer run:
 
 ```bash
-docker compose run --rm app air init`
+docker compose run --rm app air init
 ```
 
 After the first run or if you don't want hot reloading, use:
@@ -40,6 +57,16 @@ Vue based web client is located in `./web` folder. To install dependencies run:
 ```bash
 cd web
 yarn install
+```
+
+#### Admin kit
+
+Vue needs to access the adminkit, for that we have to build it as a package. 
+
+```bash
+cd web/arc/adminkit
+yarn install
+yarn build
 ```
 
 Web client has CORS allowed to run alongised with the dockerised server. Run `yarn run dev` to run the web clinet on port 5173 as usaul. If you need the front end to be serverd at the same port as the dockerised app service, you can run `yarn run docker` to build the front ned for runing in docker, now the frontend is avaliable on port 8082.
