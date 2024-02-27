@@ -7,7 +7,7 @@ const usersURL = `${import.meta.env.VITE_API_URL}/users`;
 export const useAuthStore = defineStore({
   id: "auth",
   state: () => ({
-    isLogedIn: false,
+    isLoggedIn: false,
     apiToken: null,
   }),
   getters: {
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore({
         const user = await fetchWrapper.post(`${usersURL}/login`, reqBody);
         if (user) {
           this.apiToken = user.api_token || null;
-          this.isLogedIn = true;
+          this.isLoggedIn = true;
           localStorage.setItem("user", JSON.stringify(user));
           return true;
         }
@@ -31,7 +31,7 @@ export const useAuthStore = defineStore({
       } catch (error) {
         console.error(error);
         localStorage.removeItem("user");
-        this.isLogedIn = false;
+        this.isLoggedIn = false;
         this.apiToken = null;
         return false;
       }
@@ -72,7 +72,7 @@ export const useAuthStore = defineStore({
           if (user.apiToken) {
             this.apiToken = user.apiToken;
           }
-          this.isLogedIn = true;
+          this.isLoggedIn = true;
           localStorage.setItem("user", JSON.stringify(user));
           return true;
         }
@@ -86,7 +86,7 @@ export const useAuthStore = defineStore({
     logout() {
       localStorage.removeItem("user");
       localStorage.removeItem("avatar");
-      this.isLogedIn = false;
+      this.isLoggedIn = false;
       this.apiToken = null;
       router.push("/login");
     },
