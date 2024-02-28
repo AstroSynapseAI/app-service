@@ -81,10 +81,12 @@ export const useUserStore = defineStore({
 
     async saveProfile(user_id, formData) {
       try {
+        console.log("Saving profile...--formData-", formData);
+        formData.username = 0
         const user = await fetchWrapper.post(`${usersURL}/${user_id}/save/profile`, formData);
         localStorage.setItem('user', JSON.stringify(user));
       } catch (error) {
-        console.error(error);
+        throw error // Rethrow the error to be handled in the component
       }
     }, 
 
