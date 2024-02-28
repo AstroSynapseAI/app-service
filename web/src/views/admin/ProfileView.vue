@@ -101,7 +101,6 @@ onMounted(async () => {
     if (user.account) {
       firstName.value = user.account.first_name;
       lastName.value = user.account.last_name;
-      email.value = user.account.email;
     }
   }
   catch (error) {
