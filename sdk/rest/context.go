@@ -36,7 +36,7 @@ func (ctx *Context) GetParam(key string) string {
 
 func (ctx *Context) GetID(key ...string) uint {
 	ctx.Params = mux.Vars(ctx.Request)
-	
+
 	paramKey := "id"
 	if key != nil {
 		paramKey = key[0]

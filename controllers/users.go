@@ -287,12 +287,12 @@ func (ctrl *UsersController) SaveProfile(ctx *rest.Context) {
 
 	err := ctx.JsonDecode(&reqData)
 	if err != nil {
-		ctx.SetStatus(http.StatusBadRequest)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invalid request body"})
 		return
 	}
 
 	if reqData.Username == "" {
-		ctx.SetStatus(http.StatusBadRequest)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Username is required"})
 		return
 	}
 
@@ -305,13 +305,13 @@ func (ctrl *UsersController) SaveProfile(ctx *rest.Context) {
 	account.ID = reqData.AccountID
 
 	if account.UserID == 0 || account.FirstName == "" || account.LastName == "" {
-		ctx.SetStatus(http.StatusBadRequest)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Account data is invalid"})
 		return
 	}
 
 	_, err = ctrl.User.SaveAccount(account)
 	if err != nil {
-		ctx.SetStatus(http.StatusInternalServerError)
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: "Failed to save account"})
 		return
 	}
 
@@ -322,13 +322,13 @@ func (ctrl *UsersController) SaveProfile(ctx *rest.Context) {
 	user.ID = userID
 
 	if user.Username == "" {
-		ctx.SetStatus(http.StatusBadRequest)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Username is required"})
 		return
 	}
 
 	userRecord, err := ctrl.User.Update(user)
 	if err != nil {
-		ctx.SetStatus(http.StatusInternalServerError)
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: "Failed to update user"})
 		return
 	}
 

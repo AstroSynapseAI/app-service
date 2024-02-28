@@ -62,7 +62,7 @@ const saveUserInfo = async () => {
     await user.saveProfile(user.current.ID, profileData)
   }
   catch (error) {
-    toast.error('An error occurred while fetching data.');
+    toast.error(error)
   }
 }
 
