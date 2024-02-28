@@ -1,6 +1,7 @@
 <script setup> 
 import { onMounted, ref, computed } from 'vue';
 import { useUserStore } from '@/stores/user.store';
+import { useToast } from 'vue-toastification';
 
 const user = useUserStore();
 const username = ref('');
@@ -10,6 +11,8 @@ const firstName = ref('');
 const lastName = ref('');
 const email = ref('');
 const confirmEmail = ref('');
+
+const toast = useToast();
 
 const isSaveButtonDisabled = computed(() => {
   return !username.value.trim() || !firstName.value.trim() || !lastName.value.trim();
@@ -56,10 +59,13 @@ const saveUserInfo = async () => {
       profileData.account_id = user.account.ID
     }
 
-    user.saveProfile(user.current.ID, profileData)
+    //user.saveProfile(user.current.ID, profileData)
+    toast.error('An error occurred while fetching data.');
+    console.error(Error('An error occurred while fetching data.'));
   }
   catch (error) {
-    console.error(error)
+    toast.error('An error occurred while fetching data.');
+    console.error(error);
   }
 }
 
