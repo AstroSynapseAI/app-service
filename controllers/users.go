@@ -345,18 +345,17 @@ func (ctrl *UsersController) ChangePassword(ctx *rest.Context) {
 
 	err := ctx.JsonDecode(&reqData)
 	if err != nil {
-		ctx.SetStatus(http.StatusBadRequest)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invalid request body"})
 		return
 	}
-
 	if len(reqData.Password) < 8 || reqData.Password == "" {
-		ctx.SetStatus(http.StatusBadRequest)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password is not long enough"})
 		return
 	}
 
 	user, err := ctrl.User.UpdatePassword(userID, reqData.Password)
 	if err != nil {
-		ctx.SetStatus(http.StatusInternalServerError)
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: "Failed to update password"})
 		return
 	}
 

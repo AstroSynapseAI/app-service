@@ -100,7 +100,7 @@ export const useUserStore = defineStore({
       try {
         await fetchWrapper.put(`${usersURL}/${user_id}/change/password`, formData);
       } catch (error) {
-        console.error(error);
+        throw error.Error
       }
     }
   }

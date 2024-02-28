@@ -19,7 +19,7 @@ const isSaveButtonDisabled = computed(() => {
 });
 
 const isChangeButtonDisabled = computed(() => {
-  if (!newPassword.value.trim() || !confirmPassword.value.trim()) {
+  if (!newPassword.value.trim() || !confirmPassword.value.trim() || confirmPassword.value.length < 8) {
     return true;
   }
   if (newPassword.value !== confirmPassword.value) {
@@ -83,17 +83,13 @@ const updateEmail = async () => {
 }
 
 const changePassword = async () => {
-  if (!confirmedPassword()) {
-    alert('Passwords do not match.')
-  }
-
   try {
-    user.changePassword(user.current.ID,{
+    await user.changePassword(user.current.ID,{
       password: newPassword.value
     })
   }
   catch (error) {
-    console.error(error)
+    toast.error(error)
   }
 }
 
