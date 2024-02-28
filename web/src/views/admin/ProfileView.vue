@@ -45,8 +45,6 @@ const isValidEmail = () => {
   return validEmail
 };
 
-const confirmedPassword = () => newPassword.value === confirmPassword.value;
-
 const saveUserInfo = async () => {
   try {
     const profileData = {
@@ -60,6 +58,8 @@ const saveUserInfo = async () => {
     }
 
     await user.saveProfile(user.current.ID, profileData)
+
+    toast.success("Profile saved successfully!");
   }
   catch (error) {
     toast.error(error)
@@ -87,6 +87,7 @@ const changePassword = async () => {
     await user.changePassword(user.current.ID,{
       password: newPassword.value
     })
+    toast.success("Password changed successfully!");
   }
   catch (error) {
     toast.error(error)
