@@ -11,6 +11,7 @@ const firstName = ref('');
 const lastName = ref('');
 const email = ref('');
 const confirmEmail = ref('');
+const isLoading = ref(false); 
 
 const toast = useToast();
 
@@ -46,6 +47,7 @@ const isValidEmail = () => {
 };
 
 const saveUserInfo = async () => {
+  isLoading.value = true
   try {
     const profileData = {
       username: username.value,
@@ -58,13 +60,16 @@ const saveUserInfo = async () => {
     }
 
     await user.saveProfile(user.current.ID, profileData)
-
-    toast.success("Profile saved successfully!");
+    toast.success("Profile updated successfully!");
   }
   catch (error) {
     toast.error(error)
   }
+  finally {
+    isLoading.value = false
+  }
 }
+
 
 const updateEmail = async () => {
   if (!isValidEmail()) {
@@ -83,6 +88,7 @@ const updateEmail = async () => {
 }
 
 const changePassword = async () => {
+  isLoading.value = true
   try {
     await user.changePassword(user.current.ID,{
       password: newPassword.value
@@ -91,6 +97,9 @@ const changePassword = async () => {
   }
   catch (error) {
     toast.error(error)
+  }
+  finally {
+    isLoading.value = false
   }
 }
 
@@ -113,6 +122,7 @@ onMounted(async () => {
 </script>
 
 <template>       
+ <div class="adminSpinner" v-if="isLoading"></div>
   <div class="container-fluid p-0">    
     <h1 class="h3 mb-3">Account</h1>    
     <div class="card">

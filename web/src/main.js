@@ -14,7 +14,13 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 app.use(Toast, {
-    position: POSITION.TOP_CENTER
+    position: POSITION.TOP_CENTER,
+    timeout: 1500,
+    pauseOnHover: false,
+    pauseOnLoseFocus: false,
+    hideProgressBar: true,
+    maxToasts: 1,
+    nevestOnTop: false
 });
 
 app.mount('#app')
