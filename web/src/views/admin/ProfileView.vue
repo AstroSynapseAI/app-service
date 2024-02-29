@@ -118,7 +118,6 @@ onMounted(async () => {
   feather.replace()
 })
 
-
 </script>
 
 <template>       

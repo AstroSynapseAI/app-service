@@ -18,9 +18,7 @@ app.use(Toast, {
     timeout: 1500,
     pauseOnHover: false,
     pauseOnLoseFocus: false,
-    hideProgressBar: true,
-    maxToasts: 1,
-    nevestOnTop: false
+    hideProgressBar: true
 });
 
 app.mount('#app')
