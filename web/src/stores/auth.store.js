@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useStorage } from "@vueuse/core";
 import { fetchWrapper } from "../helpers/fetch-wrapper.js";
 import router from "@/router/index.js";
 
@@ -7,12 +8,10 @@ const usersURL = `${import.meta.env.VITE_API_URL}/users`;
 export const useAuthStore = defineStore({
   id: "auth",
   state: () => ({
-    isLoggedIn: false,
-    apiToken: null,
+    isLoggedIn: useStorage("isLoggedIn", false),
+    apiToken: useStorage("apiToken", null),
+    user: useStorage("user", {}),
   }),
-  getters: {
-    currentUser: () => JSON.parse(localStorage.getItem("user")),
-  },
   actions: {
     async login(username, password) {
       const reqBody = {
@@ -24,13 +23,13 @@ export const useAuthStore = defineStore({
         if (user) {
           this.apiToken = user.api_token || null;
           this.isLoggedIn = true;
-          localStorage.setItem("user", JSON.stringify(user));
+          this.user = user;
           return true;
         }
         return false;
       } catch (error) {
         console.error(error);
-        localStorage.removeItem("user");
+        this.user = {};
         this.isLoggedIn = false;
         this.apiToken = null;
         return false;

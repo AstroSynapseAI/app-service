@@ -10,6 +10,7 @@
     "heroku-dev": "env-cmd -f .env.dev vite build"
   },
   "dependencies": {
+    "@vueuse/core": "^10.9.0",
     "chart.js": "^4.4.0",
     "markdown-it": "^13.0.2",
     "pinia": "^2.1.6",
