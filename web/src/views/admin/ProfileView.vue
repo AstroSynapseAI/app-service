@@ -178,7 +178,7 @@ onMounted(async () => {
                     Passwords do not match
                   </div>
                   <div v-else-if="isTyping && newPassword.length.trim < 8 || confirmPassword.length < 8">
-                    Password has to have more than 8 characters
+                    New password has to have more than 8 characters
                   </div>
               </div>
             </div>
