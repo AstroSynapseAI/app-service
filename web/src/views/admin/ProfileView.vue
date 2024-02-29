@@ -12,8 +12,14 @@ const lastName = ref('');
 const email = ref('');
 const confirmEmail = ref('');
 const isLoading = ref(false); 
+const isTyping = ref(false);
 
 const toast = useToast();
+
+const checkPasswordMatch = () => {
+  isTyping.value = true;
+  console.log("typing---", isTyping.value);
+};
 
 const isSaveButtonDisabled = computed(() => {
   return !username.value.trim() || !firstName.value.trim() || !lastName.value.trim();
@@ -160,14 +166,20 @@ onMounted(async () => {
           <div class="row">
             <div class="col-6">
               <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="newPassword" placeholder="New Password" v-model="newPassword">
+                <input type="password" class="form-control" id="newPassword" placeholder="New Password" v-model="newPassword" @input="checkPasswordMatch">
                 <label for="newPassword">New Password</label>
               </div>
             </div>
             <div class="col-6">
               <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" v-model="confirmPassword">
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" v-model="confirmPassword" @input="checkPasswordMatch">
                 <label for="confirmPassword">Confirm Password</label>
+                <div v-if="isTyping && newPassword !== confirmPassword">
+                    Passwords do not match
+                  </div>
+                  <div v-else-if="isTyping && newPassword.length.trim < 8 || confirmPassword.length < 8">
+                    Password has to have more than 8 characters
+                  </div>
               </div>
             </div>
           </div>
