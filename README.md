@@ -42,7 +42,7 @@ For local development, the repository comes with a docker-compose.yaml and a Doc
 To setup the environment make sure you have docker and docker-compose installed on your local machine. To intialize docker container with hot reloading the first time you run a composer run:
 
 ```bash
-docker compose run --rm app air init
+docker compose run --rm asai-app air init
 ```
 
 After the first run or if you don't want hot reloading, use:
