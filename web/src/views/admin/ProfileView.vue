@@ -18,7 +18,6 @@ const toast = useToast();
 
 const checkPasswordMatch = () => {
   isTyping.value = true;
-  console.log("typing---", isTyping.value);
 };
 
 const isSaveButtonDisabled = computed(() => {
