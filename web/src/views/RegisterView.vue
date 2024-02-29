@@ -3,7 +3,15 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
-import { Form, Field } from 'vee-validate';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+
+const schema = yup.object({
+  Username: yup.string().required(),
+  Password: yup.string().required().min(8),
+  ConfirmPassword: yup.string().required('Please confirm your password').min(8)
+    .oneOf([yup.ref('Password'), null], 'Passwords must match')
+});
 
 const route = useRoute();
 const auth = useAuthStore();
@@ -11,19 +19,8 @@ const username = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 
-const confirmedPassword = () => {
-  if (password.value === confirmPassword.value) {
-    return true
-  }
-  else {
-    return false
-  }
-};
 
 const register = async () => {
-  if (!confirmedPassword()) {
-    alert('Passwords do not match.')
-  }
 
   try {
     const loggedIn = await auth.registerInvite({
@@ -79,16 +76,17 @@ onMounted(async () => {
       </div>
     </nav>
     <div class="row">
-
       <div class="col-md-6">
         <img class="logo" src="@/assets/ASAILogotype.svg" alt="">
         <div class="card">
           <div class="card-body">
-            
-            <Form class="form-control" @submit="register">
-              <Field v-model="username" id="Email" name="Username" type="email" class="email-input d-block" placeholder="Username"></Field>
-              <Field v-model="password" id="Password" name="Password" type="password" class="pass-input d-block" placeholder="Password"></Field>
-              <Field v-model="confirmPassword" id="confirmPassword" name="confirmPassword" type="password" class="pass-input d-block" placeholder="Confirm Password"></Field>
+            <Form class="form-control" @submit="register" :validation-schema="schema">
+              <ErrorMessage name="Username" />
+              <Field v-model="username" name="Username" type="email" class="email-input d-block" placeholder="Username"/>
+              <ErrorMessage name="Password" />
+              <Field v-model="password" name="Password" type="password" class="pass-input d-block" placeholder="Password"/>
+              <ErrorMessage name="ConfirmPassword" />
+              <Field v-model="confirmPassword" name="ConfirmPassword" type="password" class="pass-input d-block" placeholder="Confirm Password"/>
               <button class="send-button btn btn-light"> REGISTER </button>
           </Form>
             
