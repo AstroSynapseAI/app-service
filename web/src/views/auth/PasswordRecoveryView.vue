@@ -1,20 +1,37 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import { Form, Field, useForm } from 'vee-validate';
 import { useAuthStore } from '@/stores/auth.store.js'; 
-import { useUserStore } from '@/stores/user.store.js';
+const auth = useAuthStore();
+
 const { handleSubmit } = useForm();
 
-const router = useRouter();
-const auth = useAuthStore();
-const user = useUserStore();
-
-let username = ref('');
-let password = ref('');
+let email = ref('');
 
 const submitLogin = handleSubmit(async values => {
+    console.log("qqq")
+  /*try {
+    const loggedIn = await auth.login(username.value, password.value)
+    if (loggedIn) {
+      await user.getUserAvatar(auth.user.ID);
+      if (user.avatar) {
+        router.push({name: 'admin', params: { avatar_id: user.avatar.ID }});
+        return
+      }
+      router.push({name: 'create-avatar'});
+    }
+    else {
+      alert('Invalid username or password');
+    }
+  }
+  catch (err) {
+    console.log(err);
+  }*/
+});
+
+/*const submitLogin = handleSubmit(async values => {
+    console.log("q")
   try {
     const loggedIn = await auth.login(username.value, password.value)
     if (loggedIn) {
@@ -32,7 +49,7 @@ const submitLogin = handleSubmit(async values => {
   catch (err) {
     console.log(err);
   }
-});
+});*/
 
 
 onMounted(() => {
@@ -65,9 +82,11 @@ onMounted(() => {
     </nav>
     <div class="row">
 
-      <div class="col-md-6">
-        
-      </div>
+        <h3 class="px-3 mb-4 mt-3 mt-md-0"> Enter your email and ASAI will send you a link to reset your password</h3>
+        <Form class="form-control" @submit="submitLogin">
+              <Field v-model="email" id="Email" name="Email" type="email" class="email-input d-block" placeholder="Username"></Field>
+              <button class="send-button btn btn-light">Reset</button>
+        </Form>
       
       <div class="col-md-6">
        
