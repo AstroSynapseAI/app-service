@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
@@ -19,15 +19,18 @@ const username = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 
+const formState = reactive({
+  isSubmitting: false, 
+});
 
 const register = async () => {
-
+  formState.isSubmitting = true; 
   try {
     const loggedIn = await auth.registerInvite({
       username: username.value,
       password: password.value,
       invite_token: route.params.invite_token
-    })
+    });
 
     if (loggedIn) {
       window.location.href = '/admin/avatar/create';
@@ -35,9 +38,9 @@ const register = async () => {
   }
   catch (error) {
     console.log(error);
+    formState.isSubmitting = false; 
   }
-}
-
+};
 onMounted(async () => {
   if (route.params.invite_token) {
     try {
@@ -48,10 +51,9 @@ onMounted(async () => {
       console.log(error);
     }
   }
-  feather.replace();
 });
-
 </script>
+
 <template>
   <div class="container d-flex flex-column vh-100">
     <nav class="navbar navbar-expand-md bg-dark bg-transparent">
@@ -87,9 +89,13 @@ onMounted(async () => {
               <Field v-model="password" name="Password" type="password" class="pass-input d-block" placeholder="Password"/>
               <ErrorMessage name="ConfirmPassword" />
               <Field v-model="confirmPassword" name="ConfirmPassword" type="password" class="pass-input d-block" placeholder="Confirm Password"/>
-              <button class="send-button btn btn-light"> REGISTER </button>
-          </Form>
-            
+              <button class="send-button btn btn-light" :disabled="formState.isSubmitting">
+                <span v-if="formState.isSubmitting">
+                  <span class="loader"></span>
+                </span>
+                <span v-else>REGISTER</span>
+              </button>
+            </Form>
           </div>
         </div>
       </div>
@@ -106,6 +112,30 @@ a {
 nav {
   margin-top: 50px;
   margin-bottom: 15em;
+}
+
+.loader {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
+
+.send-button {
+  min-width: 150px;
 }
 
 .navbar-brand {
