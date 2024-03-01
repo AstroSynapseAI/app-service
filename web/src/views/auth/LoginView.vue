@@ -18,7 +18,7 @@ const submitLogin = handleSubmit(async values => {
   try {
     const loggedIn = await auth.login(username.value, password.value)
     if (loggedIn) {
-      await user.getUserAvatar(auth.currentUser.ID);
+      await user.getUserAvatar(auth.user.ID);
       if (user.avatar) {
         router.push({name: 'admin', params: { avatar_id: user.avatar.ID }});
         return

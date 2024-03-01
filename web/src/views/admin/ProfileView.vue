@@ -113,6 +113,7 @@ onMounted(async () => {
   try {
     await user.getUserAccounts(user.current.ID);
     if (user.account) {
+      username.value = user.account.username ?? "";
       firstName.value = user.account.first_name;
       lastName.value = user.account.last_name;
     }

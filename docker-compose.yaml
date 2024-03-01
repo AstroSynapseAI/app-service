@@ -5,6 +5,7 @@ services:
     container_name: asai-app
     environment:
       - ENVIRONMENT=LOCAL DEV
+      - CGO_CFLAGS=-D_LARGEFILE64_SOURCE
     build:
       context: .
       dockerfile: ./env/docker/Dockerfile
