@@ -74,7 +74,12 @@ onMounted(() => {
               <Field v-model="username" id="Email" name="Username" type="email" class="email-input d-block" placeholder="Username"></Field>
               <Field v-model="password" id="Password" name="Password" type="password" class="pass-input d-block" placeholder="Password"></Field>
               <button class="send-button btn btn-light"> Login</button>
-          </Form>
+              <div class="col-auto">
+                  <router-link :to="{name: 'password_recovery'}" class="btn btn-light">
+                    <span>Forgot password?</span>
+                  </router-link>
+                </div>
+            </Form>
             
           </div>
         </div>
@@ -126,7 +131,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0;
   width: 100%;
 }
-.card-body {
+.card-body { 
   color: white; /* To make text visible in dark background */
 }
 

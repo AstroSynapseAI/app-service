@@ -42,6 +42,7 @@ const router = createRouter({
     },
     {
       path: '/password_recovery',
+      name: 'password_recovery',
       meta: { requiresAuth: false },
       component: PasswordRecoveryView
     },
