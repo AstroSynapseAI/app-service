@@ -1,56 +1,30 @@
 <script setup>
-import { ref } from 'vue';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Form, Field, useForm } from 'vee-validate';
 import { useAuthStore } from '@/stores/auth.store.js'; 
+import { useToast } from 'vue-toastification';
+
 const auth = useAuthStore();
-
 const { handleSubmit } = useForm();
+const toast = useToast();
 
+const isLoading = ref(false); 
 let email = ref('');
 
 const submitPasswordRecovery = handleSubmit(async values => {
     console.log("submitPasswordRecovery")
-  /*try {
-    const loggedIn = await auth.login(username.value, password.value)
-    if (loggedIn) {
-      await user.getUserAvatar(auth.user.ID);
-      if (user.avatar) {
-        router.push({name: 'admin', params: { avatar_id: user.avatar.ID }});
-        return
-      }
-      router.push({name: 'create-avatar'});
+    try {
+        isLoading = true
+        await auth.sendRecoverPasswordLink(email.value)
+        toast.success("Email sent!");
     }
-    else {
-      alert('Invalid username or password');
+    catch (error) {
+        toast.error(error)
     }
+    finally {
+      isLoading.value = false
   }
-  catch (err) {
-    console.log(err);
-  }*/
 });
-
-/*const submitLogin = handleSubmit(async values => {
-    console.log("q")
-  try {
-    const loggedIn = await auth.login(username.value, password.value)
-    if (loggedIn) {
-      await user.getUserAvatar(auth.currentUser.ID);
-      if (user.avatar) {
-        router.push({name: 'admin', params: { avatar_id: user.avatar.ID }});
-        return
-      }
-      router.push({name: 'create-avatar'});
-    }
-    else {
-      alert('Invalid username or password');
-    }
-  }
-  catch (err) {
-    console.log(err);
-  }
-});*/
-
 
 onMounted(() => {
   feather.replace();
@@ -58,6 +32,7 @@ onMounted(() => {
 
 </script>
 <template>
+  <div class="adminSpinner" v-if="isLoading"></div>
   <div class="container d-flex flex-column vh-100">
     <nav class="navbar navbar-expand-md bg-dark bg-transparent">
       <div class="container-fluid">
@@ -81,10 +56,9 @@ onMounted(() => {
       </div>
     </nav>
     <div class="row">
-
         <h3 class="px-3 mb-4 mt-3 mt-md-0"> Enter your email and ASAI will send you a link to reset your password</h3>
         <Form class="form-control" @submit="submitPasswordRecovery">
-              <Field v-model="email" id="Email" name="Email" type="email" class="email-input d-block" placeholder="Username"></Field>
+              <Field v-model="email" id="Email" name="Email" type="email" class="email-input d-block" placeholder="Email"></Field>
               <button class="send-button btn btn-light">Reset</button>
         </Form>
       

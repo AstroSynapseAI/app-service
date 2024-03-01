@@ -83,6 +83,25 @@ func (user *UsersRepository) CreateInvite(username string) (models.User, error) 
 	return userRecord, nil
 }
 
+func (user *UsersRepository) CreateAndSendRecoveryEmail(email string) (models.User, error) {
+	/*token, err := user.GenerateToken(64)
+	if err != nil {
+		return models.User{}, err
+	}
+	//get by email
+	record := models.User{
+		InviteToken: token,
+		Username:    email,
+	}
+
+	userRecord, err := user.Repo.Create(record)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return userRecord, nil*/
+}
+
 func (user *UsersRepository) ConfirmInvite(username string, password string, token string) (models.User, error) {
 	invitedUser, err := user.GetByInviteToken(token)
 	if err != nil {
@@ -132,6 +151,16 @@ func (user *UsersRepository) GetAll() ([]models.User, error) {
 func (user *UsersRepository) GetByUsername(username string) (models.User, error) {
 	var record models.User
 	err := user.Repo.DB.Where("username = ?", username).First(&record).Error
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return record, nil
+}
+
+func (user *UsersRepository) GetByEmail(email string) (models.User, error) {
+	var record models.User
+	err := user.Repo.DB.Where("email = ?", email).First(&record).Error
 	if err != nil {
 		return models.User{}, err
 	}

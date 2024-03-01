@@ -31,6 +31,7 @@ func (ctrl *UsersController) Run() {
 	ctrl.Post("/register", ctrl.Register)
 	ctrl.Post("/register/invite", ctrl.RegisterInvite)
 	ctrl.Post("/invite", ctrl.CreateInvite)
+	ctrl.Post("/password_recovery", ctrl.CreatePasswordRecovery)
 	ctrl.Post("/{id}/accounts/save", ctrl.SaveAccount)
 	ctrl.Post("/{id}/save/profile", ctrl.SaveProfile)
 
@@ -99,6 +100,29 @@ func (ctrl *UsersController) GetInvitedUser(ctx *rest.Context) {
 
 // Custom routes
 //
+
+// password recovery
+func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
+	fmt.Println("UsersController.CreatePasswordRecovery")
+	var input struct {
+		Email string `json:"email"`
+	}
+
+	err := ctx.JsonDecode(&input)
+	if err != nil {
+		ctx.SetStatus(http.StatusBadRequest)
+		return
+	}
+
+	record, err := ctrl.User.CreateAndSendRecoveryEmail(input.Email)
+	if err != nil {
+		ctx.SetStatus(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.JsonResponse(http.StatusOK, record)
+}
+
 // create user invite
 func (ctrl *UsersController) CreateInvite(ctx *rest.Context) {
 	fmt.Println("UsersController.CreateInvite")
