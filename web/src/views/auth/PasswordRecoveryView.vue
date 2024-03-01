@@ -9,8 +9,8 @@ const { handleSubmit } = useForm();
 
 let email = ref('');
 
-const submitLogin = handleSubmit(async values => {
-    console.log("qqq")
+const submitPasswordRecovery = handleSubmit(async values => {
+    console.log("submitPasswordRecovery")
   /*try {
     const loggedIn = await auth.login(username.value, password.value)
     if (loggedIn) {
@@ -83,7 +83,7 @@ onMounted(() => {
     <div class="row">
 
         <h3 class="px-3 mb-4 mt-3 mt-md-0"> Enter your email and ASAI will send you a link to reset your password</h3>
-        <Form class="form-control" @submit="submitLogin">
+        <Form class="form-control" @submit="submitPasswordRecovery">
               <Field v-model="email" id="Email" name="Email" type="email" class="email-input d-block" placeholder="Username"></Field>
               <button class="send-button btn btn-light">Reset</button>
         </Form>
