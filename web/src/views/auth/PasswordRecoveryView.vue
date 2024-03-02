@@ -11,20 +11,19 @@ const toast = useToast();
 const isLoading = ref(false); 
 let email = ref('');
 
-const submitPasswordRecovery = handleSubmit(async values => {
-    console.log("submitPasswordRecovery")
-    try {
-        isLoading = true
-        await auth.sendRecoverPasswordLink(email.value)
-        toast.success("Email sent!");
-    }
-    catch (error) {
-        toast.error(error)
-    }
-    finally {
-      isLoading.value = false
+const submitPasswordRecovery = async () => {
+  isLoading.value = true
+  try {
+    const user = await auth.sendRecoverPasswordLink(email.value)
+    toast.success("Email sent!");
   }
-});
+  catch (error) {
+    console.log(error);
+  }
+  finally {
+    isLoading.value = false
+  }
+}
 
 onMounted(() => {
   feather.replace();
@@ -58,10 +57,9 @@ onMounted(() => {
     <div class="row">
         <h3 class="px-3 mb-4 mt-3 mt-md-0"> Enter your email and ASAI will send you a link to reset your password</h3>
         <Form class="form-control" @submit="submitPasswordRecovery">
-              <Field v-model="email" id="Email" name="Email" type="email" class="email-input d-block" placeholder="Email"></Field>
+              <Field v-model="email" name="Email" type="email" class="email-input d-block" placeholder="Email"></Field>
               <button class="send-button btn btn-light">Reset</button>
         </Form>
-      
       <div class="col-md-6">
        
       </div>

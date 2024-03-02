@@ -107,6 +107,7 @@ func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
 	var input struct {
 		Email string `json:"email"`
 	}
+	fmt.Println("UsersController.Input", input)
 
 	err := ctx.JsonDecode(&input)
 	if err != nil {

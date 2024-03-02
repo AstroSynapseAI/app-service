@@ -84,22 +84,14 @@ func (user *UsersRepository) CreateInvite(username string) (models.User, error) 
 }
 
 func (user *UsersRepository) CreateAndSendRecoveryEmail(email string) (models.User, error) {
-	/*token, err := user.GenerateToken(64)
+	fmt.Println("CreateAndSendRecoveryEmail ----", email)
+
+	existingUser, err := user.GetByEmail(email)
 	if err != nil {
 		return models.User{}, err
 	}
-	//get by email
-	record := models.User{
-		InviteToken: token,
-		Username:    email,
-	}
-
-	userRecord, err := user.Repo.Create(record)
-	if err != nil {
-		return models.User{}, err
-	}
-
-	return userRecord, nil*/
+	fmt.Println("EXISTING USER GET BY EMAIL ----", existingUser)
+	return existingUser, nil
 }
 
 func (user *UsersRepository) ConfirmInvite(username string, password string, token string) (models.User, error) {
