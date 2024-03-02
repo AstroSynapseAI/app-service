@@ -18,7 +18,7 @@ const submitPasswordRecovery = async () => {
     toast.success("Email sent!");
   }
   catch (error) {
-    toast.error(error.Error)
+    toast.error(error)
   }
   finally {
     isLoading.value = false

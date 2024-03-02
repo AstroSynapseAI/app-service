@@ -111,16 +111,14 @@ func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
 	err := ctx.JsonDecode(&input)
 	if err != nil {
 		fmt.Println("UsersController nisam prosao decode")
-
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invalid request body"})
-
 		return
 	}
 	fmt.Println("UsersController prosao decode")
 
 	record, err := ctrl.User.CreateAndSendRecoveryEmail(input.Email)
 	if err != nil {
-		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Error when sending password recovery email"})
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: err.Error()})
 		return
 	}
 
