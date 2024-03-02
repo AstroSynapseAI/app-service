@@ -99,7 +99,6 @@ func (ctrl *UsersController) GetInvitedUser(ctx *rest.Context) {
 }
 
 // Custom routes
-//
 
 // password recovery
 func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
@@ -107,17 +106,21 @@ func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
 	var input struct {
 		Email string `json:"email"`
 	}
-	fmt.Println("UsersController.Input", input)
+	fmt.Println("UsersController.Input", input.Email)
 
 	err := ctx.JsonDecode(&input)
 	if err != nil {
-		ctx.SetStatus(http.StatusBadRequest)
+		fmt.Println("UsersController nisam prosao decode")
+
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invalid request body"})
+
 		return
 	}
+	fmt.Println("UsersController prosao decode")
 
 	record, err := ctrl.User.CreateAndSendRecoveryEmail(input.Email)
 	if err != nil {
-		ctx.SetStatus(http.StatusInternalServerError)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Error when sending password recovery email"})
 		return
 	}
 

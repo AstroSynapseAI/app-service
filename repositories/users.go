@@ -88,6 +88,7 @@ func (user *UsersRepository) CreateAndSendRecoveryEmail(email string) (models.Us
 
 	existingUser, err := user.GetByEmail(email)
 	if err != nil {
+		fmt.Println("EXISTING USER GET BY EMAIL ERR----", err)
 		return models.User{}, err
 	}
 	fmt.Println("EXISTING USER GET BY EMAIL ----", existingUser)
@@ -154,6 +155,7 @@ func (user *UsersRepository) GetByEmail(email string) (models.User, error) {
 	var record models.User
 	err := user.Repo.DB.Where("email = ?", email).First(&record).Error
 	if err != nil {
+		fmt.Println("TI JE ERROR ---", err)
 		return models.User{}, err
 	}
 
