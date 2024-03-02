@@ -4,8 +4,10 @@ import { useRoute } from 'vue-router';
 import { onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { Form, Field, ErrorMessage } from 'vee-validate';
+import { useToast } from 'vue-toastification';
 import * as yup from 'yup';
 
+const toast = useToast();
 const schema = yup.object({
   Username: yup.string().required(),
   Password: yup.string().required().min(8),
@@ -26,18 +28,18 @@ const formState = reactive({
 const register = async () => {
   formState.isSubmitting = true; 
   try {
-    const loggedIn = await auth.registerInvite({
-      username: username.value,
-      password: password.value,
-      invite_token: route.params.invite_token
-    });
+     const loggedIn = await auth.registerInvite({
+       username: username.value,
+       password: password.value,
+       invite_token: route.params.invite_token
+     });
 
-    if (loggedIn) {
-      window.location.href = '/admin/avatar/create';
-    }
+     if (loggedIn) {
+       window.location.href = '/admin/avatar/create';
+     }
   }
   catch (error) {
-    console.log(error);
+    toast.error(error)
     formState.isSubmitting = false; 
   }
 };
@@ -85,9 +87,9 @@ onMounted(async () => {
             <Form class="form-control" @submit="register" :validation-schema="schema">
               <ErrorMessage name="Username" />
               <Field v-model="username" name="Username" type="email" class="email-input d-block" placeholder="Username"/>
-              <ErrorMessage name="Password" />
+<ErrorMessage name="Password" />
               <Field v-model="password" name="Password" type="password" class="pass-input d-block" placeholder="Password"/>
-              <ErrorMessage name="ConfirmPassword" />
+<ErrorMessage name="ConfirmPassword" />
               <Field v-model="confirmPassword" name="ConfirmPassword" type="password" class="pass-input d-block" placeholder="Confirm Password"/>
               <button class="send-button btn btn-light" :disabled="formState.isSubmitting">
                 <span v-if="formState.isSubmitting">
