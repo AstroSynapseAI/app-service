@@ -8,8 +8,8 @@ import LoginView from '@/views/auth/LoginView.vue'
 import AdminView from '@/views/admin/AdminView.vue'
 import RegisterView from '@/views/auth/RegisterView.vue'
 import PasswordRecoveryView from '@/views/auth/PasswordRecoveryView.vue'
-
 import adminRoutes from "./admin.router";
+import PasswordResetView from "../views/auth/PasswordResetView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +45,13 @@ const router = createRouter({
       name: 'password_recovery',
       meta: { requiresAuth: false },
       component: PasswordRecoveryView
+    },
+
+    {
+      path: "/password_reset/:token?",
+      name: "password_reset",
+      meta: { requiresAuth: false },
+      component: PasswordResetView,
     },
     // {
     //   path: '/chat',

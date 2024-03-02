@@ -92,6 +92,25 @@ func (user *UsersRepository) CreateAndSendRecoveryEmail(email string) (models.Us
 		return models.User{}, err
 	}
 	fmt.Println("EXISTING USER GET BY EMAIL ----", existingUser)
+
+	// generate pw recovery token
+	recoveryToken, err := user.GenerateToken(20)
+	if err != nil {
+		return models.User{}, err
+	}
+	fmt.Println("GENERATED RECOVERY TOKEN ----", recoveryToken)
+
+	// update user with recovery token
+	/*existingUser.RecoveryToken = recoveryToken
+	_, err = user.Repo.Update(existingUser.ID, existingUser)
+	if err != nil {
+		return models.User{}, err
+	}*/
+	fmt.Println("UPDATED USER WITH RECOVERY TOKEN ----", existingUser)
+
+	//write function that will send email to user with reset link
+
+	// save in seperate table for that user
 	return existingUser, nil
 }
 
