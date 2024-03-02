@@ -153,11 +153,10 @@ func (user *UsersRepository) GetByUsername(username string) (models.User, error)
 
 func (user *UsersRepository) GetByEmail(email string) (models.User, error) {
 	var record models.User
-	err := user.Repo.DB.Where("email = ?", email).First(&record).Error
+	err := user.Repo.DB.Where("username = ?", email).First(&record).Error
 	if err != nil {
 		return models.User{}, fmt.Errorf("user with email %s doesn't exist", email)
 	}
-
 	return record, nil
 }
 
