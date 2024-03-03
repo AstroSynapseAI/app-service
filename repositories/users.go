@@ -83,8 +83,8 @@ func (user *UsersRepository) CreateInvite(username string) (models.User, error) 
 	return userRecord, nil
 }
 
-func (user *UsersRepository) CreateAndSendRecoveryEmail(email string) (models.User, error) {
-	fmt.Println("CreateAndSendRecoveryEmail ----", email)
+func (user *UsersRepository) CreateAndSendRecoveryToken(email string) (models.User, error) {
+	fmt.Println("CreateAndSendRecoveryToken ----", email)
 
 	existingUser, err := user.GetByEmail(email)
 	if err != nil {
@@ -100,29 +100,23 @@ func (user *UsersRepository) CreateAndSendRecoveryEmail(email string) (models.Us
 	}
 	fmt.Println("GENERATED RECOVERY TOKEN ----", recoveryToken)
 
-	// update user with recovery token
-	/*existingUser.RecoveryToken = recoveryToken
-	_, err = user.Repo.Update(existingUser.ID, existingUser)
-	if err != nil {
-		return models.User{}, err
-	}*/
-	fmt.Println("UPDATED USER WITH RECOVERY TOKEN ----", existingUser)
+	fmt.Println("UPDATE USER WITH RECOVERY TOKEN ----", existingUser)
+	// save token and token expiration date in user table
 
 	//write function that will send email to user with reset link
 
-	// save in seperate table for that user
 	return existingUser, nil
 }
 
 func (user *UsersRepository) ConfirmInvite(username string, password string, token string) (models.User, error) {
 	invitedUser, err := user.GetByInviteToken(token)
 	if err != nil {
-		return models.User{}, fmt.Errorf("Invalid invite token")
+		return models.User{}, fmt.Errorf("invalid invite token")
 	}
 
 	existingUser, err := user.GetByUsername(username)
 	if err == nil && existingUser.ID != invitedUser.ID {
-		return models.User{}, fmt.Errorf("User already exists")
+		return models.User{}, fmt.Errorf("user already exists")
 	}
 
 	fmt.Println("username is not taken")
@@ -172,6 +166,7 @@ func (user *UsersRepository) GetByUsername(username string) (models.User, error)
 
 func (user *UsersRepository) GetByEmail(email string) (models.User, error) {
 	var record models.User
+	// do a "fake" search with dummy data in db to test functionality
 	err := user.Repo.DB.Where("username = ?", email).First(&record).Error
 	if err != nil {
 		return models.User{}, fmt.Errorf("user with email %s doesn't exist", email)

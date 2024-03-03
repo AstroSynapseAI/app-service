@@ -55,8 +55,7 @@ export const useAuthStore = defineStore({
       };
       console.log("Sending recover password link to email : ", email)
       try {
-        const user = await fetchWrapper.post(`${usersURL}/password_recovery`, reqBody);
-        return user;
+        await fetchWrapper.post(`${usersURL}/password_recovery`, reqBody);
       } catch (error) {
         console.log("sendRecoverPasswordLink---", error)
         throw error.Error 

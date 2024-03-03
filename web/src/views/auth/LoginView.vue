@@ -76,7 +76,7 @@ onMounted(() => {
               <button class="send-button btn btn-light"> Login</button>
               
               <div class="col-auto">
-                <router-link :to="{name: 'password_recovery'}" class="btn btn-light" style="margin-top: 10px;">
+                <router-link :to="{name: 'forgot_password'}" class="btn btn-light" style="margin-top: 10px;">
                     <span>Forgot password?</span>
                 </router-link>  
               </div>

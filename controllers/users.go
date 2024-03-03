@@ -116,7 +116,7 @@ func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
 	}
 	fmt.Println("UsersController prosao decode")
 
-	record, err := ctrl.User.CreateAndSendRecoveryEmail(input.Email)
+	record, err := ctrl.User.CreateAndSendRecoveryToken(input.Email)
 	if err != nil {
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: err.Error()})
 		return
@@ -162,22 +162,22 @@ func (ctrl *UsersController) RegisterInvite(ctx *rest.Context) {
 		return
 	}
 	if reqData.Username == "" {
-        ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Username is required"})
-        return
-    }
-    if reqData.Password == "" {
-        ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password is required"})
-        return
-    }
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Username is required"})
+		return
+	}
+	if reqData.Password == "" {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password is required"})
+		return
+	}
 	if reqData.InviteToken == "" {
-        ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invite token is required"})
-        return
-    }
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invite token is required"})
+		return
+	}
 	if len(reqData.Password) < 8 {
-        ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password must be at least 8 characters long"})
-        return
-    }
-	
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password must be at least 8 characters long"})
+		return
+	}
+
 	user, err := ctrl.User.ConfirmInvite(
 		reqData.Username,
 		reqData.Password,
