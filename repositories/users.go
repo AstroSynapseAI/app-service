@@ -174,6 +174,15 @@ func (user *UsersRepository) GetByEmail(email string) (models.User, error) {
 	return record, nil
 }
 
+func (user *UsersRepository) GetByResetToken(token string) (models.User, error) {
+	var record models.User
+	err := user.Repo.DB.Where("username = ?", token).First(&record).Error
+	if err != nil {
+		return models.User{}, fmt.Errorf("invalid reset token")
+	}
+	return record, nil
+}
+
 func (user *UsersRepository) GetByAPIToken(token string) (models.User, error) {
 	var record models.User
 	err := user.Repo.DB.Where("api_token = ?", token).First(&record).Error

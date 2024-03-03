@@ -23,7 +23,7 @@ const formState = reactive({
   isSubmitting: false, 
 });
 
-const register = async () => {
+const resetPassword = async () => {
   formState.isSubmitting = true; 
   try {
      const loggedIn = await auth.registerInvite({
@@ -41,8 +41,22 @@ const register = async () => {
     formState.isSubmitting = false; 
   }
 };
+
 onMounted(async () => {
-  if (route.params.invite_token) {
+  //run call to check if route param is valid
+    //if valid, show UI
+      //if not valid,show toast err
+      try {
+        console.log("PASSWORD RESET VIEW ON MOUNTED--", route.params.reset_token);
+        const user = await auth.validateRecoveryToken(route.params.reset_token);
+        console.log(user)
+      }
+      catch (error) {
+        toast.error(error)
+    }
+
+
+  /*if (route.params.invite_token) {
     try {
       let user = await auth.getInvitedUser(route.params.invite_token);
       username.value = user.username;
@@ -50,7 +64,7 @@ onMounted(async () => {
     catch (error) {
       console.log(error);
     }
-  }
+  }*/
 });
 </script>
 

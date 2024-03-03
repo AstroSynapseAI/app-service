@@ -43,6 +43,7 @@ func (ctrl *UsersController) Run() {
 	ctrl.Get("/{id}/avatars", ctrl.GetAvatar)
 	ctrl.Get("/invited/{token}", ctrl.GetInvitedUser)
 	ctrl.Get("/token", ctrl.GetToken)
+	ctrl.Get("/password_recovery/{token}", ctrl.ValidatePasswordRecoveryToken)
 
 }
 
@@ -98,6 +99,35 @@ func (ctrl *UsersController) GetInvitedUser(ctx *rest.Context) {
 	ctx.JsonResponse(http.StatusOK, user)
 }
 
+func (ctrl *UsersController) ValidatePasswordRecoveryToken(ctx *rest.Context) {
+	fmt.Println("Fetching pw reset token")
+
+	recoveryToken := ctx.GetParam("token")
+	if recoveryToken == "" {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invalid request body"})
+		return
+	}
+
+	fmt.Println("Recovery token je ---", recoveryToken)
+
+	user, err := ctrl.User.GetByResetToken(recoveryToken)
+	if err != nil {
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: err.Error()})
+		return
+	}
+	fmt.Println("user preko tokena je ---", user)
+
+	//will check if token is == username(for now,hotfix)
+
+	/*user, err := ctrl.User.GetByInviteToken(inviteToken)
+	if err != nil {
+		ctx.SetStatus(http.StatusInternalServerError)
+		return
+	}*/
+
+	ctx.JsonResponse(http.StatusOK, user)
+}
+
 // Custom routes
 
 // password recovery
@@ -106,15 +136,12 @@ func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
 	var input struct {
 		Email string `json:"email"`
 	}
-	fmt.Println("UsersController.Input", input.Email)
 
 	err := ctx.JsonDecode(&input)
 	if err != nil {
-		fmt.Println("UsersController nisam prosao decode")
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invalid request body"})
 		return
 	}
-	fmt.Println("UsersController prosao decode")
 
 	record, err := ctrl.User.CreateAndSendRecoveryToken(input.Email)
 	if err != nil {

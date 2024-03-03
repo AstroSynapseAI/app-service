@@ -48,7 +48,7 @@ const router = createRouter({
     },
 
     {
-      path: "/password_reset/:token?",
+      path: "/password_reset/:reset_token?",
       name: "password_reset",
       meta: { requiresAuth: false },
       component: PasswordResetView,

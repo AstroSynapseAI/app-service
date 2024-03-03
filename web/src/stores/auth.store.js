@@ -55,9 +55,24 @@ export const useAuthStore = defineStore({
       };
       console.log("Sending recover password link to email : ", email)
       try {
-        await fetchWrapper.post(`${usersURL}/password_recovery`, reqBody);
+        await fetchWrapper.get(`${usersURL}/password_recovery`, reqBody);
       } catch (error) {
         console.log("sendRecoverPasswordLink---", error)
+        throw error.Error 
+      }
+    },
+
+    async validateRecoveryToken(token) {
+      try {
+        console.log("validateRecoveryToken pocetak prije calls---")
+
+        const user = await fetchWrapper.get(
+          //`${usersURL}/password_recovery/${token}`
+          `${usersURL}/password_recovery/141341341413`
+        );
+        return user
+      } catch (error) {
+        console.log("validateRecoveryToken err---", error)
         throw error.Error 
       }
     },

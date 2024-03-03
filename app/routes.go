@@ -70,6 +70,7 @@ func (routes *Routes) LoadMiddlewares(router *rest.Rest) {
 				"/api/users/register",
 				"/api/users/register/invite",
 				"/api/users/password_recovery",
+				"/api/users/password_recovery/{token}",
 			}
 
 			for _, validRoute := range publicRoutes {
