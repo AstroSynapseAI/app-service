@@ -74,11 +74,12 @@ onMounted(() => {
               <Field v-model="username" id="Email" name="Username" type="email" class="email-input d-block" placeholder="Username"></Field>
               <Field v-model="password" id="Password" name="Password" type="password" class="pass-input d-block" placeholder="Password"></Field>
               <button class="send-button btn btn-light"> Login</button>
+              
               <div class="col-auto">
-                  <router-link :to="{name: 'password_recovery'}" class="btn btn-light">
+                <router-link :to="{name: 'password_recovery'}" class="btn btn-light" style="margin-top: 10px;">
                     <span>Forgot password?</span>
-                  </router-link>
-                </div>
+                </router-link>  
+              </div>
             </Form>
             
           </div>
