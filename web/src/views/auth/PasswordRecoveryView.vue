@@ -10,7 +10,7 @@ const toast = useToast();
 let email = ref('');
 
 const schema = yup.object({
-  Email: yup.string().email(),
+  Email: yup.string().email().required(),
 });
 
 const formState = reactive({
