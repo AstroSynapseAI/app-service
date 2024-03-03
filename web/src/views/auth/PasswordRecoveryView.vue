@@ -1,18 +1,24 @@
 <script setup>
-import { onMounted, ref } from 'vue';
-import { Form, Field, useForm } from 'vee-validate';
+import { onMounted, ref, reactive } from 'vue';
+import { Form, Field, ErrorMessage } from 'vee-validate';
 import { useAuthStore } from '@/stores/auth.store.js'; 
 import { useToast } from 'vue-toastification';
+import * as yup from 'yup';
 
 const auth = useAuthStore();
-const { handleSubmit } = useForm();
 const toast = useToast();
-
-const isLoading = ref(false); 
 let email = ref('');
 
+const schema = yup.object({
+  Email: yup.string().email(),
+});
+
+const formState = reactive({
+  isSubmitting: false, 
+});
+
 const submitPasswordRecovery = async () => {
-  isLoading.value = true
+  formState.isSubmitting = true; 
   try {
     const user = await auth.sendRecoverPasswordLink(email.value)
     toast.success("Email sent!");
@@ -21,7 +27,7 @@ const submitPasswordRecovery = async () => {
     toast.error(error)
   }
   finally {
-    isLoading.value = false
+    formState.isSubmitting = false; 
   }
 }
 
@@ -31,7 +37,6 @@ onMounted(() => {
 
 </script>
 <template>
-  <div class="adminSpinner" v-if="isLoading"></div>
   <div class="container d-flex flex-column vh-100">
     <nav class="navbar navbar-expand-md bg-dark bg-transparent">
       <div class="container-fluid">
@@ -55,11 +60,20 @@ onMounted(() => {
       </div>
     </nav>
     <div class="row">
+      <div class="col-md-6">
         <h3 class="px-3 mb-4 mt-3 mt-md-0"> Enter your email and ASAI will send you a link to reset your password</h3>
-        <Form class="form-control" @submit="submitPasswordRecovery">
+        <Form class="form-control" @submit="submitPasswordRecovery" :validation-schema="schema">
               <Field v-model="email" name="Email" type="email" class="email-input d-block" placeholder="Email"></Field>
-              <button class="send-button btn btn-light">Reset</button>
+              <ErrorMessage name="Email" />
+              <button class="send-button btn btn-light" :disabled="formState.isSubmitting">
+                <span v-if="formState.isSubmitting">
+                  <span class="loader"></span>
+                </span>
+                <span v-else>RESET</span>
+              </button>
         </Form>
+      </div>
+
       <div class="col-md-6">
        
       </div>
@@ -86,6 +100,25 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
 }
 
+.loader {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
 
 .feather-icon {
   width: 24px !important;
@@ -114,7 +147,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 0;
 }
 
-.email-input, .pass-input {
+.email-input {
   width: 100%;
   margin-bottom: 2em;
   height: 3em;
