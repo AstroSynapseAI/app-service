@@ -100,7 +100,7 @@ onMounted(() => {
       </div>
       
       <div class="col-md-6">
-        <h3 class="px-3 mb-4 mt-3 mt-md-0"> Asai cloud is currently in <b>closed beta</b>, and access is limited to <b>invite only</b>. Plese send us your email, if you are interested, and we will add you in the next onbaording batch of testers.</h3>
+        <h3 class="px-3 mb-4 mt-3 mt-md-0"> Asai cloud is currently in <b>closed beta</b>, and access is limited to <b>invite only</b>. Plese send us your email, if you are interested, and we will add you in the next onboarding batch of testers.</h3>
         <Form class="form-control d-flex" action="https://formspree.io/f/xyyqjdgr" method="POST">
           <Field id="waitlist-email" name="WaitList Email" type="email" class="email-input flex-fill mb-0 corner-0" placeholder="Email"></Field>
           <button class="send-button btn btn-light" @click="''">Submit</button>
