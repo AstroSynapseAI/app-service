@@ -1,11 +1,19 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
-import { Form, Field, useForm } from 'vee-validate';
+import { Form, Field, useForm, ErrorMessage } from 'vee-validate';
 import { useAuthStore } from '@/stores/auth.store.js'; 
 import { useUserStore } from '@/stores/user.store.js';
 const { handleSubmit } = useForm();
+import { useToast } from 'vue-toastification';
+import * as yup from 'yup';
+
+const toast = useToast();
+const schema = yup.object({
+  Username: yup.string().required(),
+  Password: yup.string().required(),
+});
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -14,29 +22,33 @@ const user = useUserStore();
 let username = ref('');
 let password = ref('');
 
+const formState = reactive({
+  isSubmitting: false, 
+});
+
 const submitLogin = handleSubmit(async values => {
+  formState.isSubmitting = true;
   try {
     const loggedIn = await auth.login(username.value, password.value)
     if (loggedIn) {
       await user.getUserAvatar(auth.user.ID);
       if (user.avatar) {
         router.push({name: 'admin', params: { avatar_id: user.avatar.ID }});
-        return
+        return;
       }
       router.push({name: 'create-avatar'});
+    } else {
+      toast.error('Invalid username or password');
     }
-    else {
-      alert('Invalid username or password');
-    }
+    formState.isSubmitting = false;
   }
   catch (err) {
-    console.log(err);
+    toast.error(err);
   }
 });
 
-
 onMounted(() => {
-  feather.replace();
+  
 });
 
 </script>
@@ -70,10 +82,17 @@ onMounted(() => {
         <div class="card">
           <div class="card-body">
             
-            <Form class="form-control" @submit="submitLogin">
+            <Form class="form-control" @submit="submitLogin" :validation-schema="schema">
+              <ErrorMessage name="Username" />
               <Field v-model="username" id="Email" name="Username" type="email" class="email-input d-block" placeholder="Username"></Field>
+              <ErrorMessage name="Password" />
               <Field v-model="password" id="Password" name="Password" type="password" class="pass-input d-block" placeholder="Password"></Field>
-              <button class="send-button btn btn-light"> Login</button>
+              <button class="send-button btn btn-light" :disabled="formState.isSubmitting">
+                <span v-if="formState.isSubmitting">
+                  <span class="loader"></span>
+                </span>
+                <span v-else>LOGIN</span>
+              </button>
           </Form>
             
           </div>
@@ -159,6 +178,28 @@ h1, h2, h3, h4, h5, h6 {
 .btn:hover {
   color: black !important;
   background-color: white;
+}
+
+.loader {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    }
+    @keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+} 
+.send-button {
+  min-width: 150px;
 }
 
 @media only screen and (max-width: 576px) {
