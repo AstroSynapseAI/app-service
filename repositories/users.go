@@ -24,6 +24,9 @@ func (user *UsersRepository) Login(username string, password string) (models.Use
 	var record models.User
 	err := user.Repo.DB.Where("username = ? AND password = ?", username, password).First(&record).Error
 	if err != nil {
+		if err.Error() == "record not found" {
+			err = fmt.Errorf("Invalid username or password")
+		}
 		return models.User{}, err
 	}
 

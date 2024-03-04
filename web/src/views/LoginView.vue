@@ -37,8 +37,6 @@ const submitLogin = handleSubmit(async values => {
         return;
       }
       router.push({name: 'create-avatar'});
-    } else {
-      toast.error('Invalid username or password');
     }
     formState.isSubmitting = false;
   }
