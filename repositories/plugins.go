@@ -19,6 +19,17 @@ func NewPluginsRepository(db *database.Database) *PluginsRepository {
 	}
 }
 
+func (plugin *PluginsRepository) FetchAll() []models.Plugin {
+	var plugins []models.Plugin
+	query := plugin.Repo.DB.Preload("ActivePlugins")
+
+	result := query.Find(&plugins)
+	if result.Error != nil {
+		return []models.Plugin{}
+	}
+	return plugins
+}
+
 func (plugin *PluginsRepository) SaveActivePlugin(avatarData models.ActivePlugin) error {
 	result := plugin.Active.DB.Save(&avatarData)
 	if result.Error != nil {

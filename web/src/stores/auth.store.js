@@ -28,11 +28,10 @@ export const useAuthStore = defineStore({
         }
         return false;
       } catch (error) {
-        console.error(error);
         this.user = {};
         this.isLoggedIn = false;
         this.apiToken = null;
-        return false;
+        throw error.Error;
       }
     },
 
@@ -105,7 +104,7 @@ export const useAuthStore = defineStore({
         }
         return false;
       } catch (error) {
-        throw error.Error
+        throw error.Error;
       }
     },
 

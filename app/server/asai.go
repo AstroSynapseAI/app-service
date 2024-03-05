@@ -5,45 +5,31 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/AstroSynapseAI/app-service/app"
 	"github.com/AstroSynapseAI/app-service/controllers"
 	"github.com/AstroSynapseAI/app-service/controllers/ws"
+	"github.com/AstroSynapseAI/app-service/engine/plugins"
 	"github.com/AstroSynapseAI/app-service/sdk/crud/database"
 	"github.com/AstroSynapseAI/app-service/sdk/rest"
 	"github.com/bwmarrin/discordgo"
 )
 
 type AsaiServer struct {
+	Plugins       *plugins.PluginLoader
 	discordClient *discordgo.Session
 }
 
 func NewAsaiServer() *AsaiServer {
-	var err error
-	server := &AsaiServer{}
-
-	server.discordClient, err = discordgo.New("Bot " + os.Getenv("DISCORD_API_KEY"))
-	if err != nil {
-		fmt.Println("Failed to create Discord session:", err)
+	server := &AsaiServer{
+		Plugins: plugins.NewLoader(),
 	}
 
 	return server
 }
 
 func (server *AsaiServer) Run(db *database.Database) error {
-	// Initialize the Discord client
-	// discordCtrl := controllers.NewDiscordController(db)
-	// server.discordClient.AddHandler(discordCtrl.MsgHandler)
-	// server.discordClient.AddHandler(discordCtrl.NewMemberHandler)
-	// server.discordClient.Identify.Intents = discordgo.IntentsGuildMessages
-
-	// err := server.discordClient.Open()
-	// if err != nil {
-	// 	fmt.Println("Failed to open Discord connection:", err)
-	// 	return err
-	// }
+	server.Plugins.LoadConfig(db)
 
 	router := rest.NewRouter()
 	router.Mux.StrictSlash(true)
@@ -88,17 +74,8 @@ func (server *AsaiServer) Run(db *database.Database) error {
 		return err
 	}
 
-	// This need to be revised and probably wrapped in an plugins interface
-	// is part of the discord client
-	// Setup signal capturing for closing discord connection (I think)
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGTERM)
-
-	// Wait for SIGTERM signal
-	<-stop
-
-	// Cleanly close down the Discord session.
-	server.discordClient.Close()
+	// Open all plugins connections
+	server.Plugins.OpenConnection(db)
 
 	return nil
 }

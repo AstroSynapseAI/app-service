@@ -24,6 +24,9 @@ func (user *UsersRepository) Login(username string, password string) (models.Use
 	var record models.User
 	err := user.Repo.DB.Where("username = ? AND password = ?", username, password).First(&record).Error
 	if err != nil {
+		if err.Error() == "record not found" {
+			err = fmt.Errorf("Invalid username or password")
+		}
 		return models.User{}, err
 	}
 
@@ -111,12 +114,12 @@ func (user *UsersRepository) CreateAndSendRecoveryToken(email string) (models.Us
 func (user *UsersRepository) ConfirmInvite(username string, password string, token string) (models.User, error) {
 	invitedUser, err := user.GetByInviteToken(token)
 	if err != nil {
-		return models.User{}, fmt.Errorf("invalid invite token")
+		return models.User{}, fmt.Errorf("Invalid invite token")
 	}
 
 	existingUser, err := user.GetByUsername(username)
 	if err == nil && existingUser.ID != invitedUser.ID {
-		return models.User{}, fmt.Errorf("user already exists")
+		return models.User{}, fmt.Errorf("User already exists")
 	}
 
 	fmt.Println("username is not taken")

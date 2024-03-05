@@ -35,7 +35,7 @@ func (*Tool) SeedModel(db *database.Database) error {
 			},
 			{
 				Name:        "Metaphor Search",
-				Slug:        "ddg-image",
+				Slug:        "metaphor-search",
 				Token:       "",
 				Description: "Metaphor Search API, API key required.",
 			},

@@ -249,13 +249,23 @@ func (ctrl *UsersController) Login(ctx *rest.Context) {
 
 	err := ctx.JsonDecode(&reqData)
 	if err != nil {
-		ctx.SetStatus(http.StatusBadRequest)
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: err.Error()})
+		return
+	}
+
+	if reqData.Username == "" {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Username is required"})
+		return
+	}
+
+	if reqData.Password == "" {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password is required"})
 		return
 	}
 
 	user, err := ctrl.User.Login(reqData.Username, reqData.Password)
 	if err != nil {
-		ctx.SetStatus(http.StatusUnauthorized)
+		ctx.JsonResponse(http.StatusUnauthorized, struct{ Error string }{Error: err.Error()})
 		return
 	}
 

@@ -3,6 +3,7 @@ package google
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/tmc/langchaingo/tools"
 )
@@ -14,6 +15,7 @@ type Tool struct {
 var _ tools.Tool = &Tool{}
 
 func New(apiKey string, maxResults int) (*Tool, error) {
+	fmt.Println("Google Search SerpAPI Tool Created...")
 	return &Tool{
 		client: NewClient(apiKey, maxResults),
 	}, nil
@@ -31,6 +33,7 @@ func (tool Tool) Description() string {
 }
 
 func (tool Tool) Call(ctx context.Context, input string) (string, error) {
+	fmt.Println("Google Search SerpAPI Tool Running...")
 	result, err := tool.client.Search(ctx, input)
 	if err != nil {
 		if errors.Is(err, ErrNoGoodResult) {
@@ -38,12 +41,12 @@ func (tool Tool) Call(ctx context.Context, input string) (string, error) {
 		}
 
 		if errors.Is(err, ErrAPIError) {
-			return "Google SerpAPI respnded with an error", nil
+			return "Google SerpAPI responded with an error", nil
 		}
-		
+
 		return "", err
 	}
 
 	return result, nil
-	
+
 }

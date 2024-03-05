@@ -1,12 +1,5 @@
 package app
 
-// Ollama example for dockerized ollama, keep alive for now
-
-// cnf.LLM, err = ollama.New(
-// 	ollama.WithModel("mistral"),
-// 	ollama.WithServerURL("http://host.docker.internal:11434/"),
-// )
-
 import (
 	"fmt"
 	"os"
@@ -15,7 +8,6 @@ import (
 	"github.com/AstroSynapseAI/app-service/sdk/crud/database"
 	"github.com/AstroSynapseAI/app-service/sdk/crud/database/adapters"
 	"github.com/AstroSynapseAI/app-service/sdk/crud/orms/gorm"
-	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -116,50 +108,50 @@ func (cnf *Config) setupHeroku() {
 func (cnf *Config) setupLocalDev() {
 	cnf.DSN = DefaultDevDSN
 
-	var Config struct {
-		OpenAPIKey    string `yaml:"open_api_key"`
-		SerpAPIKey    string `yaml:"serpapi_api_key"`
-		DiscordApiKey string `yaml:"discord_api_key"`
-		WelcomeChID   string `yaml:"welcome_channel_id"`
-	}
-
-	keys, err := os.ReadFile("./app/keys.yaml")
-	if err != nil {
-		fmt.Println("Error reading keys.yaml:", err)
-		return
-	}
-
-	err = yaml.Unmarshal(keys, &Config)
-	if err != nil {
-		fmt.Println("Error unmarshalling keys.yaml:", err)
-		return
-	}
-
-	// Set the Openai API key as env variable
-	err = os.Setenv("OPENAI_API_KEY", Config.OpenAPIKey)
-	if err != nil {
-		fmt.Println("Error setting environment variable:", err)
-		return
-	}
-
-	// Set the SerpAPI API key as env variable
-	err = os.Setenv("SERPAPI_API_KEY", Config.SerpAPIKey)
-	if err != nil {
-		fmt.Println("Error setting environment variable:", err)
-		return
-	}
-
-	//Set the Discord API key as env variable
-	err = os.Setenv("DISCORD_API_KEY", Config.DiscordApiKey)
-	if err != nil {
-		fmt.Println("Error setting environment variable:", err)
-		return
-	}
-
-	// Set the Discord welcome channel ID as env variable
-	err = os.Setenv("WELCOME_CHANNEL_ID", Config.WelcomeChID)
-	if err != nil {
-		fmt.Println("Error setting environment variable:", err)
-		return
-	}
+	// var Config struct {
+	// 	OpenAPIKey    string `yaml:"open_api_key"`
+	// 	SerpAPIKey    string `yaml:"serpapi_api_key"`
+	// 	DiscordApiKey string `yaml:"discord_api_key"`
+	// 	WelcomeChID   string `yaml:"welcome_channel_id"`
+	// }
+	//
+	// keys, err := os.ReadFile("./app/keys.yaml")
+	// if err != nil {
+	// 	fmt.Println("Error reading keys.yaml:", err)
+	// 	return
+	// }
+	//
+	// err = yaml.Unmarshal(keys, &Config)
+	// if err != nil {
+	// 	fmt.Println("Error unmarshalling keys.yaml:", err)
+	// 	return
+	// }
+	//
+	// // Set the Openai API key as env variable
+	// // err = os.Setenv("OPENAI_API_KEY", Config.OpenAPIKey)
+	// // if err != nil {
+	// //		fmt.Println("Error setting environment variable:", err)
+	// //		return
+	// // }
+	//
+	// // Set the SerpAPI API key as env variable
+	// err = os.Setenv("SERPAPI_API_KEY", Config.SerpAPIKey)
+	// if err != nil {
+	// 	fmt.Println("Error setting environment variable:", err)
+	// 	return
+	// }
+	//
+	// //Set the Discord API key as env variable
+	// err = os.Setenv("DISCORD_API_KEY", Config.DiscordApiKey)
+	// if err != nil {
+	// 	fmt.Println("Error setting environment variable:", err)
+	// 	return
+	// }
+	//
+	// // Set the Discord welcome channel ID as env variable
+	// err = os.Setenv("WELCOME_CHANNEL_ID", Config.WelcomeChID)
+	// if err != nil {
+	// 	fmt.Println("Error setting environment variable:", err)
+	// 	return
+	// }
 }

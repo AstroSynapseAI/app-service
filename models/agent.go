@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/AstroSynapseAI/app-service/sdk/crud/database"
 	"gorm.io/gorm"
+	"regexp"
 )
 
 type Agent struct {
@@ -16,7 +17,7 @@ type Agent struct {
 
 func (*Agent) SeedModel(db *database.Database) error {
 	seeder := "seed_agents"
-
+	rex := regexp.MustCompile(`(?m)^\s+`)
 	result := db.Adapter.Gorm().Where("seeder_name = ?", seeder).First(&DBSeeder{})
 	if result.Error == gorm.ErrRecordNotFound {
 		var agents []Agent = []Agent{
@@ -24,7 +25,7 @@ func (*Agent) SeedModel(db *database.Database) error {
 				Name:        "Search Agent",
 				Slug:        "search-agent",
 				Description: "Utilizes search engines such as Google, DuckDuckGo, and Metaphor for automated web searches.",
-				Primer: `
+				Primer: rex.ReplaceAllString(`
 				CURRENT DATE: {{.today}}
 
 				Search Assistant is trained to search the web based on user input and conversation history using the following tools:
@@ -55,13 +56,13 @@ func (*Agent) SeedModel(db *database.Database) error {
 				
 				User input: {{.input}}
 				Thought:{{.agent_scratchpad}}
-				`,
+				`, ""),
 			},
 			{
 				Name:        "Browser Agent",
 				Slug:        "browser-agent",
 				Description: "Equipped with the capability to scrape, read website contents, and interact with web pages and web applications.",
-				Primer: `
+				Primer: rex.ReplaceAllString(`
 				Please write a detailed report of the following website and its pages that will not exceed 4048 tokens:
 		
 				"{{.context}}"
@@ -86,7 +87,7 @@ func (*Agent) SeedModel(db *database.Database) error {
 				...(Depending on relevance, you can add none or N number of links)
 		
 				FINAL THOUGHTS:
-				[Place any final thoughts or a concluding summary here]`,
+				[Place any final thoughts or a concluding summary here]`, ""),
 			},
 		}
 

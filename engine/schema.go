@@ -15,24 +15,30 @@ type AvatarConfig interface {
 	AvatarIsPublic() bool
 	GetAgents() []AgentConfig
 	GetTools() []ToolConfig
-	GetPlugins() []PluginConfig
 }
 
 type AgentConfig interface {
-	GetAgentName(agentID string) string
-	GetAgentModel(agentID string) *llms.LLM
-	GetAgentPrimer(agentID string) string
-	IsAgentPublic(agentID string) bool
-	IsAgentActive(agentID string) bool
-	GetAgentTools(agentID string) []any
+	GetAgentName() string
+	GetAgentSlug() string
+	GetAgentLLM() llms.LanguageModel
+	GetAgentPrimer() string
+	IsAgentPublic() bool
+	IsAgentActive() bool
+	GetAgentTools() []AgentToolConfig
 }
 
 type ToolConfig interface {
 	GetName() string
+	GetSlug() string
 	GetToken() string
+	IsPublic() bool
+	IsActive() bool
 }
 
-type PluginConfig interface {
+type AgentToolConfig interface {
 	GetName() string
+	GetSlug() string
 	GetToken() string
+	IsPublic() bool
+	IsActive() bool
 }

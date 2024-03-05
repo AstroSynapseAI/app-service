@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/AstroSynapseAI/app-service/engine"
+	"github.com/AstroSynapseAI/app-service/engine/agents/search"
 	"github.com/AstroSynapseAI/app-service/engine/callbacks"
 	"github.com/AstroSynapseAI/app-service/engine/memory"
 	"github.com/AstroSynapseAI/app-service/engine/templates"
@@ -42,37 +43,6 @@ func NewAsaiChain(db *database.Database) *AsaiChain {
 	}
 
 	return asaiChain
-
-	// create search agent
-	// searchAgent, err := search.NewSearchAgent()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return nil, err
-	// }
-
-	// // create browser agent
-	// scraperAgent, err := browser.New()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// // create library agent
-	// // currently using a simple tool for extracting documents
-	// libraryAgent, err := documents.NewLoader()
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// return &AsaiChain{
-	// 	LLM:    config.GetAvatarLLM(),
-	// 	Memory: asaiMemory,
-	// 	config: config,
-	// 	Agents: []tools.Tool{
-	// 		searchAgent,
-	// 		scraperAgent,
-	// 		libraryAgent,
-	// 	},
-	// }, nil
 }
 
 func (chain *AsaiChain) LoadAvatar(userID uint, sessionID string, clientType string) {
@@ -81,6 +51,31 @@ func (chain *AsaiChain) LoadAvatar(userID uint, sessionID string, clientType str
 	chain.ClientType = clientType
 	chain.Memory = memory.NewMemory(chain.config)
 	chain.Memory.SetSessionID(sessionID)
+	chain.LoadAgents()
+}
+
+func (chain *AsaiChain) LoadAgents() {
+	for _, agent := range chain.config.GetAgents() {
+		var activeAgent tools.Tool
+		var err error
+
+		if agent.GetAgentSlug() == "search-agent" && agent.IsAgentActive() {
+
+			activeAgent, err = search.NewSearchAgent(
+				search.WithPrimer(agent.GetAgentPrimer()),
+				search.WithLLM(agent.GetAgentLLM()),
+				search.WithToolsConfig(agent.GetAgentTools()),
+			)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+
+		if activeAgent != nil {
+			chain.Agents = append(chain.Agents, activeAgent)
+		}
+
+	}
 }
 
 func (chain *AsaiChain) SetStream(stream func(context.Context, []byte)) {
@@ -105,22 +100,6 @@ func (chain *AsaiChain) Prompt(ctx context.Context, input string) (string, error
 		chain.Agents,
 	)
 
-	obChain, err := NewOnboardingChain(chain.config, chain.Memory)
-	if err != nil {
-		return "", err
-	}
-
-	obResponse, err := obChain.Call(ctx, input)
-	if err != nil {
-		return "", err
-	}
-
-	tmplt := chain.loadTemplate(map[string]interface{}{
-		"onboarding": obResponse,
-	})
-
-	asaiAgent.Chain = chains.NewLLMChain(chain.LLM, tmplt)
-
 	executor := agents.NewExecutor(
 		asaiAgent,
 		chain.Agents,
@@ -139,21 +118,17 @@ func (chain *AsaiChain) Prompt(ctx context.Context, input string) (string, error
 func (chain *AsaiChain) Run(ctx context.Context, input string, options ...chains.ChainCallOption) error {
 	fmt.Println("Asai Chain Running...")
 
-	// need to try this might be I initally loaded the prompt option wrong in the Executor
-	// asaiAgent := agents.NewConversationalAgent(llm, chain.Agents, agents.WithPrompt(promptTmplt))
-
 	agentCallback := callbacks.NewStreamHandler()
 	agentCallback.ReadFromEgress(ctx, chain.Stream)
+
+	tmplt := chain.loadTemplate(map[string]interface{}{})
 
 	asaiAgent := agents.NewConversationalAgent(
 		chain.LLM,
 		chain.Agents,
 		agents.WithCallbacksHandler(agentCallback),
+		agents.WithPrompt(tmplt),
 	)
-
-	tmplt := chain.loadTemplate(map[string]interface{}{})
-
-	asaiAgent.Chain = chains.NewLLMChain(chain.LLM, tmplt)
 
 	executor := agents.NewExecutor(
 		asaiAgent,

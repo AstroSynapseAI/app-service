@@ -72,9 +72,11 @@ func (avatar *AvatarsRepository) Fetch(ID uint) (models.Avatar, error) {
 	query = query.Preload("LLM")
 	query = query.Preload("Documents")
 	query = query.Preload("Roles").Preload("Roles.Role").Preload("Roles.User")
-	query = query.Preload("ActiveAgents").Preload("ActiveAgents.Agent")
+	query = query.Preload("ActiveAgents").Preload("ActiveAgents.Agent").Preload("ActiveAgents.LLM")
+	query = query.Preload("ActiveAgents.ActiveAgentTools").Preload("ActiveAgents.ActiveAgentTools.Tool")
 	query = query.Preload("ActiveTools").Preload("ActiveTools.Tool")
 	query = query.Preload("ActivePlugins").Preload("ActivePlugins.Plugin")
+	query = query.Preload("ActiveLLMs").Preload("ActiveLLMs.LLM")
 
 	var record models.Avatar
 	result := query.First(&record, ID)

@@ -53,6 +53,7 @@ const toggleTool = (tool) => {
     const toolData = {
       active_agent_id: agentRecord.value.ID,
       tool_id: tool.ID,
+      token: tool.token,
       tool: tool,
       is_active: true,
     }
@@ -61,6 +62,9 @@ const toggleTool = (tool) => {
   }
 
   activeTool.is_active = !activeTool.is_active;
+  activeTool.token = tool.token;
+
+  console.log("activeTools", activeTools.value);
 }
 
 const submitForm = async () => {
@@ -109,6 +113,20 @@ onMounted(async () => {
         isPublicAgent.value = avatar.activeAgent.is_public;
       }
     }
+
+    for (const [index, tool] of toolRecords.value.entries()) {
+      const activeTool = activeTools.value.find(activeTool => {
+        return activeTool.tool.ID == tool.ID;
+      });
+
+      if (activeTool) {
+        tool.token = activeTool.token;
+      }
+
+      toolRecords.value[index] = tool;
+    }
+
+    console.log("loaded tool records:", toolRecords.value);
   }
   catch (error) {
     console.log(error);
@@ -175,6 +193,12 @@ onMounted(async () => {
                   <ul class="list-group">
                     <li v-for="(tool, index) in toolRecords" :key="index" class="list-group-item">
                       <span>{{ tool.name }}</span>
+                      
+                      <div class="form-floating mb-3" v-if="tool.slug != 'ddg-search'">
+                        <input type="text" class="form-control" id="apiToken" placeholder="Tool Token" v-model="tool.token">
+                        <label for="apiToken">Api Token</label>
+                      </div>
+                      
                       <i data-feather="settings" class="float-end"></i>
                       <div class="form-check form-switch float-end me-3">
                         <label class="form-check-label" for="checkboxTool{{ tool.ID }}">Active</label>
