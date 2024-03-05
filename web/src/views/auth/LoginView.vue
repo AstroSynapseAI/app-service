@@ -91,6 +91,11 @@ onMounted(() => {
                 </span>
                 <span v-else>LOGIN</span>
               </button>
+              <div class="col-auto">
+                <router-link :to="{name: 'forgot_password'}" class="btn btn-light" style="margin-top: 10px;">
+                    <span>Forgot password?</span>
+                </router-link>  
+              </div>
           </Form>
             
           </div>
