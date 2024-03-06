@@ -7,13 +7,15 @@ import (
 
 type User struct {
 	gorm.Model
-	Username    string       `json:"username,omitempty"`
-	Password    string       `json:"password,omitempty"`
-	ApiToken    string       `json:"api_token,omitempty"`
-	InviteToken string       `json:"invite_token,omitempty"`
-	IsAdmin     bool         `json:"is_admin,omitempty"`
-	Accounts    []Account    `json:"accounts,omitempty"`
-	Roles       []AvatarRole `gorm:"foreignKey:UserID;" json:"roles,omitempty"`
+	Username                 string       `json:"username,omitempty"`
+	Password                 string       `json:"password,omitempty"`
+	ApiToken                 string       `json:"api_token,omitempty"`
+	InviteToken              string       `json:"invite_token,omitempty"`
+	IsAdmin                  bool         `json:"is_admin,omitempty"`
+	Accounts                 []Account    `json:"accounts,omitempty"`
+	Roles                    []AvatarRole `gorm:"foreignKey:UserID;" json:"roles,omitempty"`
+	PasswordResetToken       string       `json:"password_reset_token,omitempty"`
+	PasswordResetTokenExpiry string       `json:"password_reset_token_expiry,omitempty"`
 }
 
 type AvatarRole struct {

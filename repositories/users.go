@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/AstroSynapseAI/app-service/models"
 	"github.com/AstroSynapseAI/app-service/sdk/crud/database"
@@ -25,7 +26,7 @@ func (user *UsersRepository) Login(username string, password string) (models.Use
 	err := user.Repo.DB.Where("username = ? AND password = ?", username, password).First(&record).Error
 	if err != nil {
 		if err.Error() == "record not found" {
-			err = fmt.Errorf("Invalid username or password")
+			err = fmt.Errorf("invalid username or password")
 		}
 		return models.User{}, err
 	}
@@ -87,39 +88,49 @@ func (user *UsersRepository) CreateInvite(username string) (models.User, error) 
 }
 
 func (user *UsersRepository) CreateAndSendRecoveryToken(email string) (models.User, error) {
-	fmt.Println("CreateAndSendRecoveryToken ----", email)
 
-	existingUser, err := user.GetByEmail(email)
+	account, err := user.GetAccountByEmail(email)
 	if err != nil {
-		fmt.Println("EXISTING USER GET BY EMAIL ERR----", err)
 		return models.User{}, err
 	}
-	fmt.Println("EXISTING USER GET BY EMAIL ----", existingUser)
+	fmt.Println("EXISTING USER GET BY EMAIL ----", account)
 
 	// generate pw recovery token
-	recoveryToken, err := user.GenerateToken(20)
+	recoveryToken, err := user.GenerateToken(64)
 	if err != nil {
 		return models.User{}, err
 	}
 	fmt.Println("GENERATED RECOVERY TOKEN ----", recoveryToken)
 
-	fmt.Println("UPDATE USER WITH RECOVERY TOKEN ----", existingUser)
+	userRecord, err := user.GetUserByAccountID(account.UserID)
+	if err != nil {
+		return models.User{}, err
+	}
+	fmt.Println("USER RECORD BY ACCOUNT ID ----", userRecord)
+
+	fmt.Println("UPDATE USER WITH RECOVERY TOKEN ----", userRecord)
 	// save token and token expiration date in user table
+	// recovery token expiry time should be a timestamp
+
+	updatedUserRecord, err := user.UpdatePasswordResetToken(userRecord.ID, recoveryToken, time.Now().Add(24*time.Hour).Format(time.RFC3339))
+	if err != nil {
+		return models.User{}, err
+	}
 
 	//write function that will send email to user with reset link
 
-	return existingUser, nil
+	return updatedUserRecord, nil
 }
 
 func (user *UsersRepository) ConfirmInvite(username string, password string, token string) (models.User, error) {
 	invitedUser, err := user.GetByInviteToken(token)
 	if err != nil {
-		return models.User{}, fmt.Errorf("Invalid invite token")
+		return models.User{}, fmt.Errorf("invalid invite token")
 	}
 
 	existingUser, err := user.GetByUsername(username)
 	if err == nil && existingUser.ID != invitedUser.ID {
-		return models.User{}, fmt.Errorf("User already exists")
+		return models.User{}, fmt.Errorf("user already exists")
 	}
 
 	fmt.Println("username is not taken")
@@ -167,12 +178,34 @@ func (user *UsersRepository) GetByUsername(username string) (models.User, error)
 	return record, nil
 }
 
-func (user *UsersRepository) GetByEmail(email string) (models.User, error) {
+/*
 	var record models.User
-	// do a "fake" search with dummy data in db to test functionality
-	err := user.Repo.DB.Where("username = ?", email).First(&record).Error
+	err := user.Repo.DB.Where("username = ?", username).First(&record).Error
 	if err != nil {
-		return models.User{}, fmt.Errorf("user with email %s doesn't exist", email)
+		return models.User{}, err
+	}
+
+	return record, nil
+*/
+
+// get account by email
+
+func (user *UsersRepository) GetUserByAccountID(id uint) (models.User, error) {
+
+	//nadji usera koji ima id isto ko i account "user_id"
+	var record models.User
+	err := user.Repo.DB.Where("id = ?", id).First(&record).Error
+	if err != nil {
+		return models.User{}, err
+	}
+	return record, nil
+}
+
+func (user *UsersRepository) GetAccountByEmail(email string) (models.Account, error) {
+	var record models.Account
+	err := user.Repo.DB.Where("email = ?", email).First(&record).Error
+	if err != nil {
+		return models.Account{}, err
 	}
 	return record, nil
 }
@@ -288,6 +321,29 @@ func (user *UsersRepository) UpdatePassword(userID uint, password string) (model
 	}
 
 	record.Password = password
+
+	_, err = user.Repo.Update(userID, record)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return record, nil
+}
+
+func (user *UsersRepository) UpdatePasswordResetToken(userID uint, resetToken string, resetTokenExpiry string) (models.User, error) {
+	fmt.Println("UpdatePasswordResetToken")
+
+	var record models.User
+	err := user.Repo.DB.Where("id = ?", userID).First(&record).Error
+	if err != nil {
+		return models.User{}, err
+	}
+	fmt.Println("USER IZ BAZE PO IDU---", record)
+
+	record.PasswordResetToken = resetToken
+	record.PasswordResetTokenExpiry = resetTokenExpiry
+
+	fmt.Println("USER NAKON MJENJANJA---", record)
 
 	_, err = user.Repo.Update(userID, record)
 	if err != nil {

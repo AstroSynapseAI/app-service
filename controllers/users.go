@@ -286,6 +286,29 @@ func (ctrl *UsersController) GetAccounts(ctx *rest.Context) {
 	ctx.JsonResponse(http.StatusOK, accounts)
 }
 
+// write a function that will fetch account by email from database
+func (ctrl *UsersController) GetAccountByEmail(ctx *rest.Context) {
+	fmt.Println("UsersController.GetAccountByEmail")
+	//userID := ctx.GetID()
+	var reqData struct {
+		Email string `json:"email"`
+	}
+
+	err := ctx.JsonDecode(&reqData)
+	if err != nil {
+		ctx.SetStatus(http.StatusBadRequest)
+		return
+	}
+
+	account, err := ctrl.User.GetAccountByEmail(reqData.Email)
+	if err != nil {
+		ctx.SetStatus(http.StatusInternalServerError)
+		return
+	}
+
+	ctx.JsonResponse(http.StatusOK, account)
+}
+
 func (ctrl *UsersController) GetAccount(ctx *rest.Context) {
 	accountID := ctx.GetID("account_id")
 	account, err := ctrl.User.GetAccount(ctx.GetID(), accountID)
