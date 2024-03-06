@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/AstroSynapseAI/app-service/models"
 	"github.com/AstroSynapseAI/app-service/repositories"
@@ -36,6 +37,7 @@ func (ctrl *UsersController) Run() {
 	ctrl.Post("/{id}/save/profile", ctrl.SaveProfile)
 
 	ctrl.Put("/{id}/change/password", ctrl.ChangePassword)
+	//ctrl.Put("/{id}/change/account_password", ctrl.ChangeAccountPassword)
 	// ctrl.Put("/{id}/change/email", ctrl.ChangeEmail)
 
 	ctrl.Get("/{id}/accounts", ctrl.GetAccounts)
@@ -116,12 +118,26 @@ func (ctrl *UsersController) ValidatePasswordRecoveryToken(ctx *rest.Context) {
 		return
 	}
 	fmt.Println("user preko tokena je ---", user)
+	fmt.Println("token recovery expiration je ---", user.PasswordResetTokenExpiry)
 
-	//will check if token is == username(for now,hotfix)
-
-	/*user, err := ctrl.User.GetByInviteToken(inviteToken)
+	tokenExpiryTime, err := time.Parse(time.RFC3339, user.PasswordResetTokenExpiry)
 	if err != nil {
-		ctx.SetStatus(http.StatusInternalServerError)
+		fmt.Println("err kod parsiranja---")
+
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: err.Error()})
+		return
+	}
+	fmt.Println("parsiran token expiry time---", tokenExpiryTime)
+
+	//check if password reset token expiry is older then 24 hours
+	if time.Since(tokenExpiryTime) >= 24*time.Hour {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Token expired"})
+		return
+	}
+
+	/*account, err := ctrl.User.GetAccountByUserID(user.ID)
+	if err != nil {
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: err.Error()})
 		return
 	}*/
 
@@ -196,10 +212,10 @@ func (ctrl *UsersController) RegisterInvite(ctx *rest.Context) {
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password is required"})
 		return
 	}
-	if reqData.InviteToken == "" {
+	/*if reqData.InviteToken == "" {
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invite token is required"})
 		return
-	}
+	}*/
 	if len(reqData.Password) < 8 {
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password must be at least 8 characters long"})
 		return
@@ -455,6 +471,41 @@ func (ctrl *UsersController) ChangePassword(ctx *rest.Context) {
 
 	user, err := ctrl.User.UpdatePassword(userID, reqData.Password)
 	if err != nil {
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: "Failed to update password"})
+		return
+	}
+
+	ctx.JsonResponse(http.StatusOK, user)
+}
+
+func (ctrl *UsersController) ChangeAccountPassword(ctx *rest.Context) {
+	fmt.Println("UsersController.ChangeAccountPassword")
+	userID := ctx.GetID()
+	fmt.Println("UsersController.ChangeAccountPassword userID--", userID)
+
+	var reqData struct {
+		Password string `json:"password"`
+	}
+
+	err := ctx.JsonDecode(&reqData)
+	if err != nil {
+		fmt.Println("UsersController.ChangeAccountPassword decode err")
+
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invalid request body"})
+		return
+	}
+
+	if len(reqData.Password) < 8 || reqData.Password == "" {
+		fmt.Println("UsersController.ChangeAccountPassword validation err")
+
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password is not long enough"})
+		return
+	}
+
+	user, err := ctrl.User.ChangeAccountPassword(userID, reqData.Password)
+	if err != nil {
+		fmt.Println("UsersController.ChangeAccountPassword change err")
+
 		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: "Failed to update password"})
 		return
 	}

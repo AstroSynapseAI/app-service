@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
+import { useUserStore } from '@/stores/user.store.js';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import { useToast } from 'vue-toastification';
 import * as yup from 'yup';
@@ -14,8 +15,10 @@ const schema = yup.object({
     .oneOf([yup.ref('Password'), null], 'Passwords must match')
 });
 
+const user = useUserStore();
 const route = useRoute();
 const auth = useAuthStore();
+const fetchedUser = ref({});
 const password = ref('');
 const confirmPassword = ref('');
 
@@ -24,47 +27,38 @@ const formState = reactive({
 });
 
 const resetPassword = async () => {
-  formState.isSubmitting = true; 
+  formState.isSubmitting = true
   try {
-     const loggedIn = await auth.registerInvite({
-       username: username.value,
-       password: password.value,
-       invite_token: route.params.invite_token
-     });
-
-     if (loggedIn) {
-       window.location.href = '/admin/avatar/create';
-     }
+    console.log("resetPassword")
+    const account = await user.changePassword(self.fetchedUser.ID,{
+      password: confirmPassword.value
+    })
+    //toast.success("Password changed successfully!");
   }
   catch (error) {
-    toast.error(error)
-    formState.isSubmitting = false; 
+    //toast.error(error)
+    console.log(error)
+  }
+  finally {
+    formState.isSubmitting  = false
   }
 };
 
 onMounted(async () => {
-  //run call to check if route param is valid
-    //if valid, show UI
-      //if not valid,show toast err
       try {
+        console.log("pocetcni account --", self.fetchedUser)
         console.log("PASSWORD RESET VIEW ON MOUNTED--", route.params.reset_token);
         const user = await auth.validateRecoveryToken(route.params.reset_token);
+        self.fetchedUser = user
+        console.log("napunjeni account --", self.user)
+
         console.log(user)
       }
       catch (error) {
+        //disable action on view
+        formState.isSubmitting = true
         toast.error(error)
     }
-
-
-  /*if (route.params.invite_token) {
-    try {
-      let user = await auth.getInvitedUser(route.params.invite_token);
-      username.value = user.username;
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }*/
 });
 </script>
 
@@ -96,7 +90,7 @@ onMounted(async () => {
         <img class="logo" src="@/assets/ASAILogotype.svg" alt="">
         <div class="card">
           <div class="card-body">
-            <Form class="form-control" @submit="register" :validation-schema="schema">
+            <Form class="form-control" @submit="resetPassword" :validation-schema="schema">
 <ErrorMessage name="Password" />
               <Field v-model="password" name="Password" type="password" class="pass-input d-block" placeholder="New Password"/>
 <ErrorMessage name="ConfirmPassword" />

@@ -66,8 +66,7 @@ export const useAuthStore = defineStore({
         console.log("validateRecoveryToken pocetak prije calls---")
 
         const user = await fetchWrapper.get(
-          //`${usersURL}/password_recovery/${token}`
-          `${usersURL}/password_recovery/141341341413`
+          `${usersURL}/password_recovery/${token}`
         );
         return user
       } catch (error) {
