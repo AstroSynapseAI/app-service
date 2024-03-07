@@ -29,15 +29,13 @@ const formState = reactive({
 const resetPassword = async () => {
   formState.isSubmitting = true
   try {
-    console.log("resetPassword")
     const account = await user.changePassword(self.fetchedUser.ID,{
       password: confirmPassword.value
     })
-    //toast.success("Password changed successfully!");
+    toast.success("Password changed successfully, you can login now");
   }
   catch (error) {
-    //toast.error(error)
-    console.log(error)
+    toast.error(error)
   }
   finally {
     formState.isSubmitting  = false
@@ -46,13 +44,8 @@ const resetPassword = async () => {
 
 onMounted(async () => {
       try {
-        console.log("pocetcni account --", self.fetchedUser)
-        console.log("PASSWORD RESET VIEW ON MOUNTED--", route.params.reset_token);
         const user = await auth.validateRecoveryToken(route.params.reset_token);
         self.fetchedUser = user
-        console.log("napunjeni account --", self.user)
-
-        console.log(user)
       }
       catch (error) {
         //disable action on view
