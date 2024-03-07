@@ -283,7 +283,6 @@ func (ctrl *UsersController) RegisterInvite(ctx *rest.Context) {
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Invite token is required"})
 		return
 	}
-
 	if len(reqData.Password) < 8 {
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Password must be at least 8 characters long"})
 		return
