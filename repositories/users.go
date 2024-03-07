@@ -327,16 +327,17 @@ func (user *UsersRepository) InsertPasswordResetToken(userID uint, resetToken st
 }
 
 func (user *UsersRepository) RemovePasswordResetToken(userID uint) (models.User, error) {
-
 	var record models.User
 	err := user.Repo.DB.Where("id = ?", userID).First(&record).Error
 	if err != nil {
 		return models.User{}, err
 	}
 
-	//need to reset these values to empty...
-	record.PasswordResetToken = "nil"
-	record.PasswordResetTokenExpiry = time.Time{}
+	zeroTime := time.Time{}
+	desiredTime := zeroTime.Add(24 * time.Hour)
+
+	record.PasswordResetToken = ""
+	record.PasswordResetTokenExpiry = desiredTime
 
 	_, err = user.Repo.Update(userID, record)
 	if err != nil {
