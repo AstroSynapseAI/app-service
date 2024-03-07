@@ -93,24 +93,16 @@ func (user *UsersRepository) CreateAndSendRecoveryToken(email string) (models.Us
 	if err != nil {
 		return models.User{}, err
 	}
-	fmt.Println("EXISTING USER GET BY EMAIL ----", account)
 
-	// generate pw recovery token
 	recoveryToken, err := user.GenerateToken(64)
 	if err != nil {
 		return models.User{}, err
 	}
-	fmt.Println("GENERATED RECOVERY TOKEN ----", recoveryToken)
 
 	userRecord, err := user.GetUserByAccountID(account.UserID)
 	if err != nil {
 		return models.User{}, err
 	}
-	fmt.Println("USER RECORD BY ACCOUNT ID ----", userRecord)
-
-	fmt.Println("UPDATE USER WITH RECOVERY TOKEN ----", userRecord)
-	// save token and token expiration date in user table
-	// recovery token expiry time should be a timestamp
 
 	updatedUserRecord, err := user.InsertPasswordResetToken(userRecord.ID, recoveryToken, time.Now().Add(24*time.Hour).Format(time.RFC3339))
 	if err != nil {
@@ -184,15 +176,6 @@ func (user *UsersRepository) GetUserByAccountID(id uint) (models.User, error) {
 	err := user.Repo.DB.Where("id = ?", id).First(&record).Error
 	if err != nil {
 		return models.User{}, err
-	}
-	return record, nil
-}
-
-func (user *UsersRepository) GetAccountByUserID(id uint) (models.Account, error) {
-	var record models.Account
-	err := user.Repo.DB.Where("user_id = ?", id).First(&record).Error
-	if err != nil {
-		return models.Account{}, err
 	}
 	return record, nil
 }
@@ -326,42 +309,16 @@ func (user *UsersRepository) UpdatePassword(userID uint, password string) (model
 	return record, nil
 }
 
-func (user *UsersRepository) ChangeAccountPassword(id uint, password string) (models.Account, error) {
-	fmt.Println("ChangeAccountPassword funkcijaaa")
-
-	var record models.Account
-	err := user.Repo.DB.Where("id = ?", id).First(&record).Error
-	if err != nil {
-		return models.Account{}, err
-	}
-	fmt.Println("ChangeAccountPassword nova lozinka ---", record)
-
-	record.Password = password
-	fmt.Println("ChangeAccountPassword nova lozinka ---", record.Password)
-
-	err = user.Repo.DB.Model(&record).Update("password", record.Password).Error
-	if err != nil {
-		return models.Account{}, err
-	}
-	fmt.Println("ChangeAccountPassword updejtao lozinku ---")
-
-	return record, nil
-}
-
 func (user *UsersRepository) InsertPasswordResetToken(userID uint, resetToken string, resetTokenExpiry string) (models.User, error) {
-	fmt.Println("InsertPasswordResetToken")
 
 	var record models.User
 	err := user.Repo.DB.Where("id = ?", userID).First(&record).Error
 	if err != nil {
 		return models.User{}, err
 	}
-	fmt.Println("USER IZ BAZE PO IDU---", record)
 
 	record.PasswordResetToken = resetToken
 	record.PasswordResetTokenExpiry = resetTokenExpiry
-
-	fmt.Println("USER NAKON MJENJANJA---", record)
 
 	_, err = user.Repo.Update(userID, record)
 	if err != nil {

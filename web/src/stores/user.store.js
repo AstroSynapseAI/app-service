@@ -102,18 +102,7 @@ export const useUserStore = defineStore({
       } catch (error) {
         throw error.Error
       }
-    },
-
-    /*async changeAccountPassword(user_id, formData) {
-      try {
-        console.log("changeAccountPassword store---id", user_id)
-        console.log("changeAccountPassword store---formdata", formData)
-
-        await fetchWrapper.put(`${usersURL}/${user_id}/change/account_password`, formData);
-      } catch (error) {
-        throw error.Error
-      }
-    }*/
+  },
   }
-
+  
 })
