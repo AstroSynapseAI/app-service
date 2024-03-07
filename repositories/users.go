@@ -104,7 +104,7 @@ func (user *UsersRepository) CreateAndSendRecoveryToken(email string) (models.Us
 		return models.User{}, err
 	}
 
-	updatedUserRecord, err := user.InsertPasswordResetToken(userRecord.ID, recoveryToken, time.Now().Add(24*time.Hour).Format(time.RFC3339))
+	updatedUserRecord, err := user.InsertPasswordResetToken(userRecord.ID, recoveryToken, time.Now().Add(24*time.Hour))
 	if err != nil {
 		return models.User{}, err
 	}
@@ -309,7 +309,7 @@ func (user *UsersRepository) UpdatePassword(userID uint, password string) (model
 	return record, nil
 }
 
-func (user *UsersRepository) InsertPasswordResetToken(userID uint, resetToken string, resetTokenExpiry string) (models.User, error) {
+func (user *UsersRepository) InsertPasswordResetToken(userID uint, resetToken string, resetTokenExpiry time.Time) (models.User, error) {
 
 	var record models.User
 	err := user.Repo.DB.Where("id = ?", userID).First(&record).Error
@@ -319,6 +319,26 @@ func (user *UsersRepository) InsertPasswordResetToken(userID uint, resetToken st
 
 	record.PasswordResetToken = resetToken
 	record.PasswordResetTokenExpiry = resetTokenExpiry
+
+	_, err = user.Repo.Update(userID, record)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	return record, nil
+}
+
+func (user *UsersRepository) RemovePasswordResetToken(userID uint) (models.User, error) {
+
+	var record models.User
+	err := user.Repo.DB.Where("id = ?", userID).First(&record).Error
+	if err != nil {
+		return models.User{}, err
+	}
+
+	//need to reset these values to empty...
+	record.PasswordResetToken = "nil"
+	record.PasswordResetTokenExpiry = time.Time{}
 
 	_, err = user.Repo.Update(userID, record)
 	if err != nil {

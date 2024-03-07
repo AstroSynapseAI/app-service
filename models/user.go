@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/AstroSynapseAI/app-service/sdk/crud/database"
 	"gorm.io/gorm"
 )
@@ -15,7 +17,7 @@ type User struct {
 	Accounts                 []Account    `json:"accounts,omitempty"`
 	Roles                    []AvatarRole `gorm:"foreignKey:UserID;" json:"roles,omitempty"`
 	PasswordResetToken       string       `json:"password_reset_token,omitempty"`
-	PasswordResetTokenExpiry string       `json:"password_reset_token_expiry,omitempty"`
+	PasswordResetTokenExpiry time.Time    `json:"password_reset_token_expiry,omitempty"`
 }
 
 type AvatarRole struct {

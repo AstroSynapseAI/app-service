@@ -115,13 +115,7 @@ func (ctrl *UsersController) ValidatePasswordRecoveryToken(ctx *rest.Context) {
 		return
 	}
 
-	tokenExpiryTime, err := time.Parse(time.RFC3339, user.PasswordResetTokenExpiry)
-	if err != nil {
-		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: err.Error()})
-		return
-	}
-
-	if time.Since(tokenExpiryTime) >= 24*time.Hour {
+	if time.Since(user.PasswordResetTokenExpiry) >= 24*time.Hour {
 		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Token expired"})
 		return
 	}
@@ -461,7 +455,13 @@ func (ctrl *UsersController) ChangePassword(ctx *rest.Context) {
 		return
 	}
 
-	ctx.JsonResponse(http.StatusOK, user)
+	usr, err := ctrl.User.RemovePasswordResetToken(user.ID)
+	if err != nil {
+		ctx.JsonResponse(http.StatusInternalServerError, struct{ Error string }{Error: "Internal error"})
+		return
+	}
+
+	ctx.JsonResponse(http.StatusOK, usr)
 }
 
 // func (ctrl *UsersController) ChangeEmail(ctx *rest.Context) {
