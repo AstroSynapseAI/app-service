@@ -109,8 +109,6 @@ func (user *UsersRepository) CreateAndSendRecoveryToken(email string) (models.Us
 		return models.User{}, err
 	}
 
-	//write function that will send email to user with reset link
-
 	return updatedUserRecord, nil
 }
 

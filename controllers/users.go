@@ -3,13 +3,17 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/AstroSynapseAI/app-service/models"
 	"github.com/AstroSynapseAI/app-service/repositories"
 	"github.com/AstroSynapseAI/app-service/sdk/crud/database"
 	"github.com/AstroSynapseAI/app-service/sdk/rest"
+	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"github.com/thanhpk/randstr"
+	"gopkg.in/yaml.v2"
 
 	"github.com/AstroSynapseAI/app-service/sdk/crud/orms/gorm"
 )
@@ -144,7 +148,91 @@ func (ctrl *UsersController) CreatePasswordRecovery(ctx *rest.Context) {
 		return
 	}
 
-	ctx.JsonResponse(http.StatusOK, record)
+	var envSetup string
+
+	if os.Getenv("ENVIRONMENT") == "LOCAL DEV" {
+		envSetup = "http://localhost:5173/password_reset/"
+	}
+
+	if os.Getenv("ENVIRONMENT") == "HEROKU DEV" {
+		envSetup = "https://dev.asai.astrosynapse.ai/password_reset/"
+	}
+
+	if os.Getenv("ENVIRONMENT") == "AWS DEV" {
+		envSetup = "https://asai.astrosynapse.ai/password_reset/"
+	}
+
+	fromEmail, err := getSendgridEmail()
+	if err != nil {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Error sending email"})
+		return
+	}
+
+	from := mail.NewEmail("ASAI", fromEmail)
+	subject := "Password recovery"
+	to := mail.NewEmail("Recipient Name", input.Email)
+	plainTextContent := "Password reset link"
+	resetLink := envSetup + record.PasswordResetToken
+
+	htmlContent := "<p>Open the following link to reset your password:</p>"
+	htmlContent += "<p><a href=\"" + resetLink + "\">" + resetLink + "</a></p>"
+
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+
+	apiKey, err := getSendgridAPIKey()
+	if err != nil {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Error sending email"})
+		return
+	}
+
+	client := sendgrid.NewSendClient(apiKey)
+
+	// Send the email
+	response, err := client.Send(message)
+	if err != nil {
+		ctx.JsonResponse(http.StatusBadRequest, struct{ Error string }{Error: "Error sending email"})
+		return
+	}
+
+	ctx.JsonResponse(http.StatusOK, response)
+}
+
+func getSendgridAPIKey() (string, error) {
+
+	var Config struct {
+		SendgridAPIKey string `yaml:"sendgrid_api_key"`
+	}
+
+	keys, err := os.ReadFile("./app/keys.yaml")
+	if err != nil {
+		fmt.Println("Error reading keys.yaml:", err)
+	}
+
+	err = yaml.Unmarshal(keys, &Config)
+	if err != nil {
+		fmt.Println("Error unmarshalling keys.yaml:", err)
+	}
+
+	return Config.SendgridAPIKey, nil
+}
+
+func getSendgridEmail() (string, error) {
+
+	var Config struct {
+		SendgridEmail string `yaml:"sendgrid_email"`
+	}
+
+	keys, err := os.ReadFile("./app/keys.yaml")
+	if err != nil {
+		fmt.Println("Error reading keys.yaml:", err)
+	}
+
+	err = yaml.Unmarshal(keys, &Config)
+	if err != nil {
+		fmt.Println("Error unmarshalling keys.yaml:", err)
+	}
+
+	return Config.SendgridEmail, nil
 }
 
 // create user invite
