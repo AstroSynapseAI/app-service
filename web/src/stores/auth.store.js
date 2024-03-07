@@ -61,14 +61,11 @@ export const useAuthStore = defineStore({
 
     async validateRecoveryToken(token) {
       try {
-        console.log("validateRecoveryToken pocetak prije calls---")
-
         const user = await fetchWrapper.get(
           `${usersURL}/password_recovery/${token}`
         );
         return user
       } catch (error) {
-        console.log("validateRecoveryToken err---", error)
         throw error.Error 
       }
     },
