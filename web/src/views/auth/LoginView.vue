@@ -42,6 +42,7 @@ const submitLogin = handleSubmit(async values => {
   }
   catch (err) {
     toast.error(err);
+    formState.isSubmitting = false; 
   }
 });
 
