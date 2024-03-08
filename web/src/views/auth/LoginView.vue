@@ -46,7 +46,7 @@ const submitLogin = handleSubmit(async values => {
 });
 
 onMounted(() => {
-  
+  feather.replace(); 
 });
 
 </script>

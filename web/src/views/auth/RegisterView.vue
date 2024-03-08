@@ -44,6 +44,7 @@ const register = async () => {
   }
 };
 onMounted(async () => {
+  feather.replace(); 
   if (route.params.invite_token) {
     try {
       let user = await auth.getInvitedUser(route.params.invite_token);
