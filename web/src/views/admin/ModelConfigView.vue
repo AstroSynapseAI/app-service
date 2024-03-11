@@ -3,6 +3,12 @@ import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, toRef } from 'vue';
 import { useLLMStore } from '@/stores/llm.store';
 import { useAvatarStore } from '@/stores/avatar.store';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+
+const schema = yup.object({
+  ModelToken: yup.string().required("Token is required"),
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -10,6 +16,7 @@ const llm = useLLMStore();
 const avatar = useAvatarStore();
 
 const modelName = ref('');
+const modelDescription = ref('');
 const modelToken = ref('');
 const isActive = ref(false);
 
@@ -18,7 +25,7 @@ const toggleActive = () => {
 }
 
 const saveModel = async () => {
-  try {
+    try {
     await llm.saveLLM({
       ID: parseInt(route.params.active_model_id),
       avatar_id: parseInt(route.params.avatar_id),
@@ -38,6 +45,7 @@ onMounted(async () => {
   try {
     await llm.getLLM(route.params.model_id);
     modelName.value = llm.record.name;
+    modelDescription.value = llm.record.description;
     if (route.params.active_model_id) {
       await avatar.getActiveLLM( route.params.avatar_id, route.params.model_id);
       if (avatar.activeLLM) {
@@ -62,31 +70,33 @@ onMounted(async () => {
         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" :checked="isActive" @click="toggleActive">
       </div>
     </h1>
+    <span>{{ modelDescription }}</span> 
 
-    <div class="row">
+    <div class="row mt-3">
       <div class="col-12">
 
         <div class="card">
 
           <div class="card-body">
-            <div class="container">
+            <Form class="container" :validation-schema="schema" @submit="saveModel" >
 
               <div class="row">
                 <div class="col-12">
                   <div class="form-floating mb-3">
-                    <input v-model="modelToken" type="text" class="form-control" id="floatingInput" placeholder="Token...">
+                    <Field name="ModelToken" v-model="modelToken" type="text" class="form-control mb-1" id="floatingInput" />
+                    <ErrorMessage name="ModelToken" />
                     <label for="floatingInput">Token</label>
                   </div>
                 </div>
               </div>
               
-              <div class="row mt-3">
+              <div class="row">
                 <div class="col-12">
-                  <button type="button" class="btn btn-secondary" @click="saveModel">Save</button>
+                  <button type="submit" class="btn btn-secondary">Save</button>
                 </div>    
               </div>
 
-            </div>
+            </Form>
 
           </div>
 
