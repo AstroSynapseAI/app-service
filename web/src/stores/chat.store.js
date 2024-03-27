@@ -153,7 +153,6 @@ export const useChatStore = defineStore({
     },
 
     async getPrivateSession(avatar_id, session_id) {
-      console.log("Loading session...");
       var responseMsgs = []
       try {
         const histroy = await fetchWrapper.get(`${apiUrl}/avatars/${avatar_id}/session/${session_id}`);
