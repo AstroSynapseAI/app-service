@@ -59,7 +59,6 @@ export const useUserStore = defineStore({
     },
 
     async getUserAvatar(user_id) {
-      console.log('fetch avatar')
       try {
         const avatar = await fetchWrapper.get(`${usersURL}/${user_id}/avatars`);
         this.avatar = avatar
