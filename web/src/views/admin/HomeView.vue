@@ -111,11 +111,19 @@ const editPrompt = function editPrompt(index) {
 
                     <div class="col-10">
                       <div v-if="message.isLoading">
-                        <p><span class="me-3">I'm thinking... </span><span class="spinner mb-2 me-2"><img
-                              v-if="!message.isAgentRunnig" src="../../assets/loader.png" alt=""></span></p>
-                        <p v-if="message.isAgentRunnig"><span class="me-3 fst-italic">Activating agent: {{
-                  message.agentName }}... </span><span class="spinner mb-2 me-2"><img
-                              src="../../assets/loader.png" alt=""></span></p>
+                        <p>
+                          <span class="me-3">I'm thinking... </span>
+                          <span class="spinner mb-2 me-2">
+                            <img v-if="!message.isAgentRunnig" src="../../assets/loader.png" alt="">
+                          </span>
+                        </p>
+
+                        <p v-if="message.isAgentRunnig">
+                          <span class="me-3 fst-italic">Activating agent: {{ message.agentName }}... </span>
+                          <span class="spinner mb-2 me-2">
+                            <img src="../../assets/loader.png" alt="">
+                          </span>
+                        </p>
                       </div>
 
                       <div v-else class="message-content pe-3" v-html="md.render(message.content.trim())"></div>
