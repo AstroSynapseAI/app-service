@@ -3,6 +3,7 @@ package callbacks
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/tmc/langchaingo/callbacks"
@@ -51,11 +52,15 @@ func (handler *StreamHandler) ReadFromEgress(ctx context.Context, callback func(
 }
 
 func (handler *StreamHandler) HandleChainStart(_ context.Context, inputs map[string]any) {
-	jsonPayload := map[string]any{
-		"step": "chain start",
+	fmt.Println("Chain Started...")
+
+	if len(inputs) == 1 {
+		jsonPayload := map[string]any{
+			"step": "chain start",
+		}
+		jsonData, _ := json.Marshal(jsonPayload)
+		handler.egress <- jsonData
 	}
-	jsonData, _ := json.Marshal(jsonPayload)
-	handler.egress <- jsonData
 }
 
 func (handler *StreamHandler) HandleChainEnd(_ context.Context, outputs map[string]any) {
@@ -77,6 +82,22 @@ func (handler *StreamHandler) HandleToolStart(_ context.Context, input string) {
 func (handler *StreamHandler) HandleToolEnd(_ context.Context, output string) {
 	jsonPayload := map[string]any{
 		"step": "tool end",
+	}
+	jsonData, _ := json.Marshal(jsonPayload)
+	handler.egress <- jsonData
+}
+
+func (handler *StreamHandler) HandleAgentStart(_ context.Context) {
+	jsonPayload := map[string]any{
+		"step": "agent start",
+	}
+	jsonData, _ := json.Marshal(jsonPayload)
+	handler.egress <- jsonData
+}
+
+func (handler *StreamHandler) HandleAgentFinish(_ context.Context, finish schema.AgentFinish) {
+	jsonPayload := map[string]any{
+		"step": "agent finish",
 	}
 	jsonData, _ := json.Marshal(jsonPayload)
 	handler.egress <- jsonData
