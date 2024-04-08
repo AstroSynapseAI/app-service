@@ -27,6 +27,7 @@ let { resetForm, handleSubmit, defineField } = useForm({
 
 const [prompt, promptAttrs] = defineField('prompt');
 const promptElement = ref(null);
+let inputFieldLineHeight = ref(0);
 let inputRowNum = ref(0);
 
 watch(() => props.promptInput, (value) => {
@@ -43,17 +44,20 @@ watch(isLoading, (value, oldValue) => {
   }
 });
 
+function getInputLineHeight() {
+  return parseInt(window.getComputedStyle(promptElement.value.$el).getPropertyValue("line-height"));
+}
+
 function getInputRowNumber() {
-  const lineHeight = parseInt(window.getComputedStyle(promptElement.value.$el).getPropertyValue("line-height"));
-  return [Math.floor(promptElement.value.$el.scrollHeight / lineHeight), lineHeight];
+  return (promptElement.value.$el.value.match(/\n/g) || []).length;
 }
 
 function resizeTextArea() {
-  let [currentRows, lineHeight] = getInputRowNumber();
+  let currentRows = getInputRowNumber();
   currentRows = currentRows > MAX_ROWS ? MAX_ROWS : currentRows;
   if (currentRows != inputRowNum.value) {
     inputRowNum.value = currentRows;
-    promptElement.value.$el.style.height = `${currentRows * lineHeight}px`;
+    promptElement.value.$el.style.height = `${(currentRows * inputFieldLineHeight.value)+inputFieldLineHeight.value}px`;
   }
 }
 
@@ -76,6 +80,7 @@ const onSubmit = handleSubmit((values, ctx) => {
 
 onMounted(() => {
   feather.replace();
+  inputFieldLineHeight.value = getInputLineHeight();
   inputRowNum.value = getInputRowNumber();
 });
 
@@ -135,6 +140,7 @@ textarea {
   color: white !important;
   z-index: 999;
   border: none;
+  min-height: 46px;
 }
 
 textarea:focus {
