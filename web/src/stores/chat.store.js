@@ -53,6 +53,7 @@ export const useChatStore = defineStore({
       this.socket.addEventListener('message', (event) => {
         var payload = JSON.parse(event.data);
 
+        console.log("Received payload step:", payload.step);
         switch (payload.step) {
           case "chain start":
             this.onChainStart(payload);
@@ -129,7 +130,7 @@ export const useChatStore = defineStore({
     },
 
     async sendPrompt(payload) {      
-      console.log("Sending prompt:", payload);
+      // console.log("Sending prompt:", payload);
 
       var userMsg = {
         sender: "human",

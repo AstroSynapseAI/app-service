@@ -45,13 +45,10 @@ watch(lastMessageText, () => {
 
 onMounted(async () => {
   try {
-    console.log('home mounted');
     if (user.session_id === null) {
-      console.log('no session');
       // generate new token and session
       await user.getSessionToken();
     } else {
-      console.log('has session');
       // fetch the session messages
       await chatStore.getPrivateSession(route.params.avatar_id, user.session_id);
     }
