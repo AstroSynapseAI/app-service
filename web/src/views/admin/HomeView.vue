@@ -134,7 +134,7 @@ const editPrompt = function editPrompt(index) {
 
               <div ref="promptContainer" class="prompt-container">
                 <hr class="border border-3 opacity-100">
-                <PromptInput v-bind:promptInput="promptInput" />
+                <PromptInput :promptInput="promptInput" :conversationContainer="conversationContainer" />
               </div>
             </div>
           </div>
