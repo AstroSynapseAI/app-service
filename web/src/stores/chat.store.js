@@ -52,8 +52,8 @@ export const useChatStore = defineStore({
 
       this.socket.addEventListener('message', (event) => {
         var payload = JSON.parse(event.data);
-
-        console.log("Received payload step:", payload.step);
+        
+        console.log("Received message:", payload); 
         switch (payload.step) {
           case "chain start":
             this.onChainStart(payload);
@@ -106,7 +106,7 @@ export const useChatStore = defineStore({
       this.aiMsg.agentName = payload.agent;
     },
     onMessage(payload) {
-      console.log("Received message:", payload);
+      // console.log("Received message:", payload);
       if (this.aiMsg.isLoading) {
         this.aiMsg.isLoading = false;
       }
