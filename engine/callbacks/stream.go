@@ -90,11 +90,6 @@ func (handler *StreamHandler) HandleChainEnd(_ context.Context, outputs map[stri
 		jsonData, _ := json.Marshal(jsonPayload)
 		handler.egress <- jsonData
 	}
-	// jsonPayload := map[string]any{
-	// 	"step": "chain end",
-	// }
-	// jsonData, _ := json.Marshal(jsonPayload)
-	// handler.egress <- jsonData
 }
 
 func (handler *StreamHandler) HandleAgentFinish(_ context.Context, finish schema.AgentFinish) {

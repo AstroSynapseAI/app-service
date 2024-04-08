@@ -53,7 +53,6 @@ export const useChatStore = defineStore({
       this.socket.addEventListener('message', (event) => {
         var payload = JSON.parse(event.data);
 
-        console.log("Received message step:", payload.step);
         switch (payload.step) {
           case "chain start":
             this.onChainStart(payload);
@@ -90,12 +89,10 @@ export const useChatStore = defineStore({
       this.aiMsg.agentName = null;
     },
     onAgentRunning(payload) {
-      console.log("Agent running:", payload.agent);
       this.aiMsg.isAgentRunnig = true;
       this.aiMsg.agentName = payload.agent;
     },
     onMessage(payload) {
-      console.log("Received message:", payload);
       if (this.aiMsg.isLoading) {
         this.aiMsg.isLoading = false;
       }
@@ -156,32 +153,6 @@ export const useChatStore = defineStore({
             responseMsgs.push(msg)
           }
           this.messages = responseMsgs;
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-
-    async loadHistory() {
-      const userStore = useUserStore();
-      const session_id = userStore.user.session_id;
-      var responseMsgs = []
-      try {
-        console.log("Loading history...");
-        const response = await fetchWrapper.get(`${chatURL}/history/${session_id}`);
-
-        if (response) {
-          for (var i = 0; i < response.length; i++) {
-            var msg = {
-              sender: response[i].type,
-              content: response[i].text
-            }
-            responseMsgs.push(msg)
-          }
-          this.messages = responseMsgs;
-        } else {
-          console.log("No history found. New user connected");
-          this.newUserConnected(userStore);
         }
       } catch (error) {
         console.error(error);
