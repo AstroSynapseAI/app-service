@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/tmc/langchaingo/callbacks"
@@ -23,6 +24,10 @@ type StreamHandler struct {
 	LastTokens      string
 	KeywordDetected bool
 	PrintOutput     bool
+
+	//tmp fix
+	ChainsActive   []string
+	ChainsFinished []string
 }
 
 var _ callbacks.Handler = &StreamHandler{}
@@ -33,8 +38,10 @@ func NewStreamHandler(keywords ...string) *StreamHandler {
 	}
 
 	return &StreamHandler{
-		egress:   make(chan []byte),
-		Keywords: DefaultKeywords,
+		egress:         make(chan []byte),
+		Keywords:       DefaultKeywords,
+		ChainsActive:   make([]string, 0),
+		ChainsFinished: make([]string, 0),
 	}
 }
 
@@ -53,8 +60,12 @@ func (handler *StreamHandler) ReadFromEgress(ctx context.Context, callback func(
 
 func (handler *StreamHandler) HandleChainStart(_ context.Context, inputs map[string]any) {
 	fmt.Println("Chain Started...")
+	// ugly tmp fix
 
-	if len(inputs) == 1 {
+	chainID := "chain" + strconv.Itoa(len(handler.ChainsActive))
+	handler.ChainsActive = append(handler.ChainsActive, chainID)
+
+	if len(handler.ChainsActive) == 1 {
 		jsonPayload := map[string]any{
 			"step": "chain start",
 		}
@@ -64,35 +75,26 @@ func (handler *StreamHandler) HandleChainStart(_ context.Context, inputs map[str
 }
 
 func (handler *StreamHandler) HandleChainEnd(_ context.Context, outputs map[string]any) {
-	jsonPayload := map[string]any{
-		"step": "chain end",
-	}
-	jsonData, _ := json.Marshal(jsonPayload)
-	handler.egress <- jsonData
-}
+	// ugly tmp fix, need to do research into callbacks again
+	fmt.Println("Chain Ended...")
+	fmt.Println("Actve Chains", len(handler.ChainsActive))
 
-func (handler *StreamHandler) HandleToolStart(_ context.Context, input string) {
-	jsonPayload := map[string]any{
-		"step": "tool start",
-	}
-	jsonData, _ := json.Marshal(jsonPayload)
-	handler.egress <- jsonData
-}
+	finishedChainID := "chain" + strconv.Itoa(len(handler.ChainsFinished))
+	handler.ChainsFinished = append(handler.ChainsFinished, finishedChainID)
 
-func (handler *StreamHandler) HandleToolEnd(_ context.Context, output string) {
-	jsonPayload := map[string]any{
-		"step": "tool end",
+	if len(handler.ChainsFinished) == len(handler.ChainsActive) {
+		fmt.Println("Final Chain end")
+		jsonPayload := map[string]any{
+			"step": "chain end",
+		}
+		jsonData, _ := json.Marshal(jsonPayload)
+		handler.egress <- jsonData
 	}
-	jsonData, _ := json.Marshal(jsonPayload)
-	handler.egress <- jsonData
-}
-
-func (handler *StreamHandler) HandleAgentStart(_ context.Context) {
-	jsonPayload := map[string]any{
-		"step": "agent start",
-	}
-	jsonData, _ := json.Marshal(jsonPayload)
-	handler.egress <- jsonData
+	// jsonPayload := map[string]any{
+	// 	"step": "chain end",
+	// }
+	// jsonData, _ := json.Marshal(jsonPayload)
+	// handler.egress <- jsonData
 }
 
 func (handler *StreamHandler) HandleAgentFinish(_ context.Context, finish schema.AgentFinish) {

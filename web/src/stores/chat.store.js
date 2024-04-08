@@ -52,20 +52,14 @@ export const useChatStore = defineStore({
 
       this.socket.addEventListener('message', (event) => {
         var payload = JSON.parse(event.data);
-        
-        console.log("Received message:", payload); 
+
+        console.log("Received message step:", payload.step);
         switch (payload.step) {
           case "chain start":
             this.onChainStart(payload);
             break;
           case "chain end":
             this.onChainEnd(payload);
-            break;
-          case "tool start":
-            this.onToolStart(payload);
-            break;
-          case "tool end":
-            this.onToolEnd(payload);
             break;
           case "agent action":
             this.onAgentRunning(payload);
@@ -95,18 +89,13 @@ export const useChatStore = defineStore({
       this.aiMsg.isAgentRunnig = false;
       this.aiMsg.agentName = null;
     },
-    onToolStart(payload) {
-
-    },
-    onToolEnd(payload) {
-
-    },
     onAgentRunning(payload) {
+      console.log("Agent running:", payload.agent);
       this.aiMsg.isAgentRunnig = true;
       this.aiMsg.agentName = payload.agent;
     },
     onMessage(payload) {
-      // console.log("Received message:", payload);
+      console.log("Received message:", payload);
       if (this.aiMsg.isLoading) {
         this.aiMsg.isLoading = false;
       }
@@ -130,7 +119,7 @@ export const useChatStore = defineStore({
     },
 
     async sendPrompt(payload) {      
-      // console.log("Sending prompt:", payload);
+      console.log("Sending prompt:", payload);
 
       var userMsg = {
         sender: "human",
