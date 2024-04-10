@@ -171,7 +171,7 @@ onMounted(async () => {
           </div>
           <hr>
 
-          <h3>Change Email <span class="text-muted">({{ email }})</span></h3>
+          <h3>Change Email <span class="text-muted">{{ email }}</span></h3>
           <div class="row">
             <div class="col-6">
               <div class="form-floating mb-3">
