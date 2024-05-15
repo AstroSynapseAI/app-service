@@ -1,11 +1,18 @@
 .DS_store
 keys.yaml
 tmp/
-.vscode/
 api-requests.http
 .air.toml
 
+# Node
 node_modules
 yarn.lock
 package.json
 config.json
+
+# binary output
+app-service # from go build
+
+# IDE files
+.idea/*
+.vscode/
