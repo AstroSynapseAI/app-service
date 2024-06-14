@@ -28,15 +28,15 @@ const (
 		Onboarding process should not start:
 		- if the conversation history is NOT empty
 
-		Onbaording process should end:
+		Onboarding process should end:
 		- if all steps of the onboarding scripts are concluded
-		- if user explictly requested it
+		- if user explicitly requested it
 
-		Onbaording process should continue:
-		- until the AI hasen't categorized the new user 
+		Onboarding process should continue:
+		- until the AI hasn't categorized the new user 
 		- if user is inquisitive about the Astro Synapse company or ASAI
 
-		Your reponse will always be: 
+		Your response will always be: 
 		Yes - if the onboarding process should begin
 		Yes - if the onboarding process should continue
 		No - if the onboarding process should stop
